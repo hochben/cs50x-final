@@ -1,9 +1,97 @@
-/* Size for brand */
-nav .navbar-brand {
-    font-size: xx-large;
+/* Sidebar */
+#sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    background: #5f6fb0;
+    color: #fff;
+    transition: all 0.3s;
 }
 
-/* Colors for brand */
-nav .navbar-brand .blue {
-    color: #4582ec;
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #5f6fb0;
+    font-size: small;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #455888;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    text-decoration: none;
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #5f6fb0;
+    text-decoration: none;
+}
+
+ul.CTAs {
+    padding: 20px;
+}
+
+.list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+ul.CTAs a {
+    text-align: center;
+    font-size: 0.9em !important;
+    display: block;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+a.register {
+    background: #fff;
+    color: #455888;
+    text-decoration: none;
+}
+
+a.signin {
+    background: #455888;
+    color: #fff;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+/* Main page content */
+body {
+    background: #fafafa;
+}
+
+html {
+    display: block;
+}
+
+div {
+    display: block;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
 }
