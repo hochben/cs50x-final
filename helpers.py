@@ -1,10 +1,21 @@
 from flask import redirect, render_template, session
 from functools import wraps
 
-
+# Reference: helpers.py from week9 pset "finance"
 def errorhandler(message, code=400):
     """Render error codes as messages to user."""
-    return render_template("errors.html", top=code, bottom=message)
+    def escape(s):
+        """
+        Escape special characters.
+
+        https://github.com/jacebrowning/memegen#special-characters
+        """
+        for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
+                         ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
+            s = s.replace(old, new)
+        return s
+    return render_template("errors.html", top=code, bottom=escape(message)), code
+
 
 # Reference: helpers.py from week9 pset "finance"
 def login_required(f):
