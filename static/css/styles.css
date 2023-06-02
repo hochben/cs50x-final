@@ -1,67 +1,24 @@
 /* Sidebar */
-#sidebar {
-    background: #5f6fb0;
-    color: white;
-    height: 100%;
-    left: 0;
-    padding: 10px;
-    top: 0;
-    transition: all 0.3s;
-    width: 300px;
-    z-index: 999;
+#sidebar a #header {
+    font-weight: 700;
 }
-
-#sidebar a {
-    color: white;
-    font-size: small;
+#sidebar .CTA a#register {
+    background: white;
+    color: #455888;
     text-decoration: none;
 }
 
-#sidebar ul li a {
-    display: block;
-    font-size: 1.1em;
-    list-style-type: none;
-    padding: 10px;
-
-}
-
-#sidebar ul ul a {
-    background: #5f6fb0;
-    font-size: 0.9em !important;
-    padding-left: 30px !important;
-
-}
-
-#sidebar ul.CTAs {
-    padding: 10px;
-}
-
-#sidebar .list-unstyled {
-    color: white;
-    list-style: none;
-    padding-left: 0;
-}
-
-#sidebar .CTAs a {
-    border-radius: 5px;
-    display: block;
-    font-size: 0.9em !important;
-    margin-bottom: 5px;
-    text-align: center;
-}
-
-#sidebar .CTAs a.register {
-    background: white;
-    color: #455888;
-}
-
-#sidebar .CTAs a.signin {
+#sidebar .CTA a#signin {
     background: #455888;
     color: white;
+    text-decoration: none;
 }
 
 
 /* Main page content */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700&display=swap');
 body {
-    background: #fafafa;
+    font-family: 'Manrope', sans-serif;
+    --bs-font-sans-serif: 'Manrope', sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
 }
