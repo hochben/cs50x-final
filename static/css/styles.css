@@ -1,97 +1,67 @@
 /* Sidebar */
 #sidebar {
-    width: 250px;
-    position: fixed;
-    top: 0;
+    background: #5f6fb0;
+    color: white;
+    height: 100%;
     left: 0;
-    height: 100vh;
-    z-index: 999;
-    background: #5f6fb0;
-    color: #fff;
+    padding: 10px;
+    top: 0;
     transition: all 0.3s;
+    width: 300px;
+    z-index: 999;
 }
 
-#sidebar.active {
-    margin-left: -250px;
-}
-
-#sidebar .sidebar-header {
-    padding: 20px;
-    background: #5f6fb0;
+#sidebar a {
+    color: white;
     font-size: small;
-}
-
-#sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #455888;
+    text-decoration: none;
 }
 
 #sidebar ul li a {
-    padding: 10px;
-    font-size: 1.1em;
     display: block;
-    text-decoration: none;
+    font-size: 1.1em;
+    list-style-type: none;
+    padding: 10px;
+
 }
 
-ul ul a {
+#sidebar ul ul a {
+    background: #5f6fb0;
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #5f6fb0;
-    text-decoration: none;
+
 }
 
-ul.CTAs {
-    padding: 20px;
+#sidebar ul.CTAs {
+    padding: 10px;
 }
 
-.list-unstyled {
-    padding-left: 0;
+#sidebar .list-unstyled {
+    color: white;
     list-style: none;
+    padding-left: 0;
 }
 
-ul.CTAs a {
-    text-align: center;
-    font-size: 0.9em !important;
-    display: block;
+#sidebar .CTAs a {
     border-radius: 5px;
+    display: block;
+    font-size: 0.9em !important;
     margin-bottom: 5px;
+    text-align: center;
 }
 
-a.register {
-    background: #fff;
+#sidebar .CTAs a.register {
+    background: white;
     color: #455888;
-    text-decoration: none;
 }
 
-a.signin {
+#sidebar .CTAs a.signin {
     background: #455888;
-    color: #fff;
-    text-decoration: none;
+    color: white;
 }
 
-@media (max-width: 768px) {
-    #sidebar {
-        margin-left: -250px;
-    }
-    #sidebar.active {
-        margin-left: 0;
-    }
-}
 
 /* Main page content */
 body {
     background: #fafafa;
-}
-
-html {
-    display: block;
-}
-
-div {
-    display: block;
-}
-
-.wrapper {
-    display: flex;
-    width: 100%;
 }
