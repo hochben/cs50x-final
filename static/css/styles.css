@@ -1,24 +1,124 @@
 /* Sidebar */
-#sidebar a #header {
-    font-weight: 700;
-}
-#sidebar .CTA a#register {
-    background: white;
-    color: #455888;
-    text-decoration: none;
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    
 }
 
-#sidebar .CTA a#signin {
-    background: #455888;
+#sidebar {
+    background: #546dad;
+    float: left;
+    height: 100%;
+    padding: 10px 0;
+    position: fixed;
+    width: 20% !important;
+}
+
+#sidebar a {
     color: white;
     text-decoration: none;
 }
 
+#sidebar ul {
+    padding: 10px 10px;
+    text-align: center;
+}
+
+#sidebar ul li {
+    list-style: none;
+    padding: 10px 0;
+    text-align: left;
+}
+
+#sidebar ul #dropdown-menu {
+    bottom: 0;
+    position: relative;
+}
+
+#sidebar ul #dropdown-menu-items {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+
+#sidebar img {
+    float:left;
+    margin: 10px;
+}
+
+#sidebar h1 {
+    color: white;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+#sidebar li a.register, a.signin {
+    border-radius: 5px;
+    padding: 10px 25px;
+}
+
+#sidebar li a.register {
+    background: white;
+    color: #455888;
+}
+
+#sidebar li a.signin {
+    background: #455888;
+    color: white;
+}
+
+#sidebar li .button {
+    margin: 10px auto;
+}
+
+/* Sidebar mobile */
+#sidebar-mobile {
+    display: none;
+}
 
 /* Main page content */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700&display=swap');
 body {
     font-family: 'Manrope', sans-serif;
-    --bs-font-sans-serif: 'Manrope', sans-serif;
-    --bs-body-font-family: var(--bs-font-sans-serif);
 }
+
+#navbar, footer, .wrapper {
+    float: right;
+    width: 80% !important;
+    text-align: center;
+}
+
+#navbar {
+    background: #fafafa;
+    padding: 5px 2%;
+}
+
+.wrapper {
+    background: #fff;
+    overflow: hidden;
+    padding-top: 60px;
+    padding-bottom: 120px;
+    position: relative; 
+}
+
+footer {
+    background: floralwhite;
+    bottom: 0;
+    padding: 5px 2%;
+    position: absolute;
+    right: 0;
+}
+/* 
+@media only screen and (max-width: 768px) {
+    #sidebar-mobile {
+        display: block;
+    }
+
+    #sidebar #default, #sidebar h1 {
+        display: none;
+    }
+}
+*/
