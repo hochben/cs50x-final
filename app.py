@@ -165,7 +165,7 @@ def change_password():
         return render_template("/success.html")
 
     else:
-        return render_template("change_password.html")
+        return render_template("/change_password.html")
 
 
 # Run the application

@@ -1,7 +1,8 @@
 /* Sidebar */
 #sidebar a #header {
-    font-weight: 700;
+    font-weight: 800;
 }
+
 #sidebar .CTA a#register {
     background: white;
     color: #455888;
