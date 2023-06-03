@@ -1,4 +1,3 @@
-/* Sidebar */
 * {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -8,7 +7,8 @@
     
 }
 
-#sidebar {
+/* Sidebar */
+#bs-override #sidebar {
     background: #546dad;
     float: left;
     height: 100%;
@@ -17,66 +17,61 @@
     width: 20% !important;
 }
 
-#sidebar a {
+#bs-override #sidebar a {
     color: white;
     text-decoration: none;
 }
 
-#sidebar ul {
+#bs-override #sidebar ul {
     padding: 10px 10px;
     text-align: center;
 }
 
-#sidebar ul li {
+#bs-override #sidebar ul li {
     list-style: none;
     padding: 10px 0;
     text-align: left;
 }
 
-#sidebar ul #dropdown-menu {
+#bs-override #sidebar ul #dropdown-menu {
     bottom: 0;
     position: relative;
 }
 
-#sidebar ul #dropdown-menu-items {
+#bs-override #sidebar ul #dropdown-menu-items {
     bottom: 0;
     left: 0;
     position: absolute;
 }
 
-#sidebar img {
+#bs-override #sidebar img {
     float:left;
     margin: 10px;
 }
 
-#sidebar h1 {
+#bs-override #sidebar h1 {
     color: white;
     font-size: 1.5em;
     font-weight: 700;
 }
 
-#sidebar li a.register, a.signin {
+#bs-override #sidebar li a.register, a.signin {
     border-radius: 5px;
     padding: 10px 25px;
 }
 
-#sidebar li a.register {
+#bs-override #sidebar li a.register {
     background: white;
     color: #455888;
 }
 
-#sidebar li a.signin {
+#bs-override #sidebar li a.signin {
     background: #455888;
     color: white;
 }
 
-#sidebar li .button {
+#bs-override #sidebar li .button {
     margin: 10px auto;
-}
-
-/* Sidebar mobile */
-#sidebar-mobile {
-    display: none;
 }
 
 /* Main page content */
