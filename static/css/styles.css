@@ -7,7 +7,7 @@
     
 }
 
-/* Sidebar */
+ /* Sidebar */
 #bs-override #sidebar {
     background: #546dad;
     float: left;
@@ -49,7 +49,7 @@
     margin: 10px;
 }
 
-#bs-override #sidebar h1 {
+#bs-override #sidebar header {
     color: white;
     font-size: 1.5em;
     font-weight: 700;
@@ -63,7 +63,6 @@
 #bs-override #sidebar li a.register {
     background: white;
     color: #455888;
-    text-decoration: none;
 }
 
 #bs-override #sidebar li a.signin {
@@ -79,6 +78,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700&display=swap');
 body {
     font-family: 'Manrope', sans-serif;
-    --bs-font-sans-serif: 'Manrope', sans-serif;
-    --bs-body-font-family: var(--bs-font-sans-serif);
+}
+
+#navbar, footer, .wrapper {
+    float: right;
+    width: 80% !important;
+    text-align: center;
+}
+
+#navbar {
+    background: #fafafa;
+    padding: 5px 2%;
 }
