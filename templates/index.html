@@ -4,6 +4,64 @@
   Dashboard
 {% endblock %}
 
+<!-- Main -->
 {% block main %}
-  text goes here
+  <div class="main-title">
+    <p class="font-weight-bold">DASHBOARD</p>
+  </div>
+
+  <!-- Cards -->
+  <div class="main-cards">
+
+    <div class="card">
+      <div class="card-inner">
+        <p class="text-primary font-weight-bold">ACCOUNT BALANCE</p>
+        <span class="material-icons-outlined text-blue">account_balance</span>
+      </div>
+      <p class="text-primary font-weight-bold">test</p>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <h3>CASH</h3>
+        <span class="material-icons-outlined text-orange">account_balance_wallet</span>
+      </div>
+      <p class="text-primary font-weight-bold">test</p>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <h3>INCOME</h3>
+        <span class="material-icons-outlined text-green">paid</span>
+      </div>
+      <p class="text-primary font-weight-bold">test</p>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+        <h3>EXPENSES</h3>
+        <span class="material-icons-outlined text-red">payments</span>
+      </div>
+      <p class="text-primary font-weight-bold">test</p>
+    </div>
+
+  </div>
+  <!-- End Cards -->
+
+  <!-- Charts -->
+  <div class="charts">
+
+    <div class="charts-card">
+      <h2 class="chart-title">Overview</h2>
+      <div id="column-chart"></div>
+    </div>
+
+    <div class="charts-card">
+      <h2 class="chart-title">Expense Categories</h2>
+      <div id="donut-chart"></div>
+    </div>
+
+  </div>
+  <!-- End Charts -->
 {% endblock %}
+<!-- End Main -->

@@ -127,7 +127,7 @@ def logout():
     session.clear()
 
     # Redirect User to login form
-    return redirect("/")
+    return redirect("/login")
 
 
 
