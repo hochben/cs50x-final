@@ -35,19 +35,25 @@
         </div>
         <div class="header-right">
           {% if session["user_id"] %}
-            <span class="font-weight-bold">{{ username }}</span>
+            <span id="username" class="font-weight-bold">{{ username }}</span>
             <span class="material-icons-outlined">account_circle</span>
             
             <!-- Dropdown menu -->
             <span id="dropdown-arrow" class="material-icons-outlined">arrow_drop_down</span>
             <div id="dropdown-menu" class="dropdown-menu">
-              <a href="/change_password">
-                <span class="material-icons-outlined">manage_accounts</span>Settings
-              </a>
-              <hr>
-              <a href="/logout">
-                <span id="logout-button" class="material-icons-outlined">logout</span>Log Out
-              </a>
+              <ul>
+                <li class="settings">
+                  <a href="/change_password">
+                    <span class="material-icons-outlined">manage_accounts</span>Change Password
+                  </a>
+                </li>
+                <hr>
+                <li class="logout">
+                  <a href="/logout">
+                    <span id="logout-button" class="material-icons-outlined">logout</span>Log Out
+                  </a>
+                </li>
+              </ul>
             </div>
 
           {% else %}
@@ -62,7 +68,7 @@
       <aside id="sidebar">
         <div class="sidebar-title">
           <div class="sidebar-brand">
-            <a href="#" target="_blank">
+            <a href="/">
               <span class="material-icons-outlined">savings</span>Budget Manager
             </a>
           </div>
@@ -76,26 +82,41 @@
             </a>
           </li>
           <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              <span class="material-icons-outlined">calendar_month</span>History
+            <a href="/create_budget" target="_blank">
+              <span class="material-icons-outlined">add_circle_outline</span>Create Budget
             </a>
           </li>
           <li class="sidebar-list-item">
             <a href="#" target="_blank">
-              <span class="material-icons-outlined">insights</span>Insights
+              <span class="material-icons-outlined">calendar_month</span>History
             </a>
           </li>
         </ul>
       </aside>
       <!-- End Sidebar -->
 
+      
+
       <!-- Main -->
       <main class="main-container">
+        {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class="flash-messages">
+                  {% for message in messages %}
+                    <li>{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+        <!-- End Flash messages -->
+        
         {% block main %}{% endblock %}
       </main>
       <!-- End Main-->
 
     </div>
     <!-- End Grid Container -->
+
+    
   </body>
 </html>

@@ -1,12 +1,19 @@
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, flash, get_flashed_messages, redirect, render_template, request, session
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
+import secrets
 
 from helpers import errorhandler, login_required
+from models import db, Users, Budget, Income, Expense
 
 # Initialize Flask application
 app = Flask(__name__)
+
+# Set secret key
+secret_key = secrets.token_hex(16)
+app.secret_key = secret_key
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -14,19 +21,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Connect to database
-db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db.init_app(app)
 
-# Define database models
-class Users(db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
-    hash = db.Column(db.String, nullable=False)
-
 with app.app_context():
-    db.create_all()
-
+        db.create_all()
 
 @app.route('/')
 @login_required
@@ -34,7 +33,7 @@ def index():
     """Show dashboard"""
 
     # Get the current user
-    current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).fetchone()
+    current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
 
     # Retrieve the username from the current_user result object
     username = current_user.username
@@ -74,6 +73,7 @@ def register():
         db.session.commit()
 
         # Redirect User to login page
+        flash('User created successfully!', 'success')
         return redirect("/login")
 
     # User reached route via GET
@@ -127,6 +127,7 @@ def logout():
     session.clear()
 
     # Redirect User to login form
+    flash('Log out successfull!', 'success')
     return redirect("/login")
 
 
@@ -162,10 +163,57 @@ def change_password():
         db.session.commit()
 
         # Redirect User to home page
-        return render_template("/success.html")
-
+        flash('Password changed successfully!', 'success')
+        return redirect("/")
+    
+    # User reached route via GET
     else:
-        return render_template("/change_password.html")
+        return render_template("change_password.html")
+
+
+@app.route("/create_budget", methods=["GET", "POST"])
+@login_required
+def create_budget():
+    if request.method == "POST":
+        # get current user and budget
+        current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
+        current_budget = db.session.execute(db.select(["*"]).where(Budget.user_id == current_user.user_id)).first()
+
+        # get income
+        income = request.form.get("income")
+
+        # get expenses
+        categories = request.form.getlist("category[]")
+        amounts = request.form.getlist("amount[]")
+        expense_count = request.form.get("expense_count")
+
+        # insert income into database
+        db.session.execute(db.insert(Income).values(user_id=current_user.user_id, amount=income))
+        db.session.commit()
+
+        # create or retrieve budget for current user
+        if not current_budget:
+            db.session.execute(db.insert(Budget).values(user_id=current_user.user_id))
+            db.session.commit()
+            current_budget = db.session.execute(db.select(["*"]).where(Budget.user_id == current_user.user_id)).first()
+
+        print("categories:", categories)
+        print("amounts:", amounts)
+        print("expense_count:", expense_count)
+
+        # insert expense entries into database
+        for i in range(int(expense_count)):
+            expense = Expense(budget_id=current_budget.id, category=categories[i], amount=amounts[i])
+            db.session.add(expense)
+        db.session.commit()
+
+        # redirect user to home page
+        flash('Budget created successfully!', 'success')
+        return redirect("/")
+    
+    # user reached route via GET
+    else:
+        return render_template("create_budget.html")
 
 
 # Run the application

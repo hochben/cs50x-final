@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var dropdownArrow = document.getElementById("dropdown-arrow");
   var dropdownMenu = document.getElementById("dropdown-menu");
-  var logoutButton = document.getElementById("logout-button");
 
   dropdownArrow.addEventListener("click", function () {
     dropdownMenu.style.display = "block";
@@ -48,9 +47,66 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  logoutButton.addEventListener("click", function () {
-    // Handle logout logic here
-  });
+
+
+  /*----- ADD EXPENSES FORM ENTRY -----*/
+
+  const addEntryButton = document.getElementById('add-entry');
+  const expenseContainer = document.getElementById('expense-container');
+  const expenseCountInput = document.getElementById('expense_count');
+
+  addEntryButton.addEventListener('click', function () {
+    const newEntry = document.createElement('div');
+    newEntry.className = 'expense-entry';
+    newEntry.innerHTML = `
+      <label for="category[]">Category:</label>
+      <select name="category[]" class="category" required>
+        <option value="">Select a category</option>
+        <option value="Childcare">Childcare</option>
+        <option value="Debt-Payments">Debt Payments</option>
+        <option value="Dining Out">Dining Out</option>
+        <option value="Education">Education</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Gifts/Donations">Gifts/Donations</option>
+        <option value="Groceries">Groceries</option>
+        <option value="Health/Medical">Health/Medical</option>
+        <option value="Hobbies/Recreation">Hobbies/Recreation</option>
+        <option value="Home-Maintenance">Home Maintenance</option>
+        <option value="Insurance">Insurance</option>
+        <option value="Pet-Expenses">Pet Expenses</option>
+        <option value="Personal-Care">Personal Care</option>
+        <option value="Rent/Mortgage">Rent/Mortgage</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Subscriptions">Subscriptions</option>
+        <option value="Transportation">Transportation</option>
+        <option value="Travel">Travel</option>
+        <option value="Utilities">Utilities</option>
+        <option value="">------</option>
+        <option value="Miscellaneous">Miscellaneous</option>
+      </select>
+
+      <label for="amount[]]>Amount:</label>
+      <input type="number" name="amount[]" class="amount" required>
+      `;
+
+      expenseContainer.appendChild(newEntry);
+    
+      // Assign value based on count of expense entries
+      expenseCountInput.value = document.getElementsByClassName('expense-entry').length + 1;
+    
+      // Add event listener to remove button
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-entry';
+      removeButton.innerHTML = 'Remove';
+      removeButton.addEventListener('click', function () {
+        newEntry.remove();
+
+        // Assign value to expenseCountInput based on count of expense entries
+        expenseCountInput.value = document.getElementsByClassName('expense-entry').length - 1;
+      });
+    
+      newEntry.appendChild(removeButton);
+    });
 
 
 
