@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
   /*----- SIDEBAR TOGGLE -----*/
 
   var sidebarOpen = false;
@@ -49,217 +48,153 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  /*----- ADD EXPENSES FORM ENTRY -----*/
+  /*----- CHARTS -----*/
 
-  const addEntryButton = document.getElementById('add-entry');
-  const expenseContainer = document.getElementById('expense-container');
-  const expenseCountInput = document.getElementById('expense_count');
+  // Fetch budget_data from Flask route
+  fetch("/budget_data")
+  .then(response => response.json())
+  .then(data => {
 
-  addEntryButton.addEventListener('click', function () {
-    const newEntry = document.createElement('div');
-    newEntry.className = 'expense-entry';
-    newEntry.innerHTML = `
-      <label for="category[]">Category:</label>
-      <select name="category[]" class="category" required>
-        <option value="">Select a category</option>
-        <option value="Childcare">Childcare</option>
-        <option value="Debt-Payments">Debt Payments</option>
-        <option value="Dining Out">Dining Out</option>
-        <option value="Education">Education</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Gifts/Donations">Gifts/Donations</option>
-        <option value="Groceries">Groceries</option>
-        <option value="Health/Medical">Health/Medical</option>
-        <option value="Hobbies/Recreation">Hobbies/Recreation</option>
-        <option value="Home-Maintenance">Home Maintenance</option>
-        <option value="Insurance">Insurance</option>
-        <option value="Pet-Expenses">Pet Expenses</option>
-        <option value="Personal-Care">Personal Care</option>
-        <option value="Rent/Mortgage">Rent/Mortgage</option>
-        <option value="Shopping">Shopping</option>
-        <option value="Subscriptions">Subscriptions</option>
-        <option value="Transportation">Transportation</option>
-        <option value="Travel">Travel</option>
-        <option value="Utilities">Utilities</option>
-        <option value="">------</option>
-        <option value="Miscellaneous">Miscellaneous</option>
-      </select>
+    // Extract data from JSON response
+    var expenseCategory = data.expense_category;
+    var expenseAmount = data.expense_amount;
+    var incomeCategory = data.income_category;
+    var incomeAmount = data.income_amount;
 
-      <label for="amount[]]>Amount:</label>
-      <input type="number" name="amount[]" class="amount" required>
+    // Log data to console
+    console.log(expenseCategory);
+    console.log(expenseAmount);
+    console.log(incomeCategory);
+    console.log(incomeAmount);
+
+    /* PIE CHART */
+    var pieChartOptions = {
+      series: amount,
+      chart: {
+        type: 'donut',
+        height: 350,
+        background: "transparent",
+        animations: {
+          enabled: true,
+          easing: 'easeinout',
+          speed: 800,
+          animateGradually: {
+              enabled: true,
+              delay: 150
+          },
+          dynamicAnimation: {
+              enabled: true,
+              speed: 350
+          }
+        }
+      },
+      labels: category,
+      
+      fill: {
+        opacity: 1,
+      },
+      legend: {
+        labels: {
+          color: "#f5f7ff",
+        },
+        color: "#f5f7ff",
+        show: true,
+        position: "bottom",
+      },
+      stroke: {
+        colors: ["transparent"],
+        show: true,
+        width: 2,
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        theme: "dark",
+      },
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 200
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }]
+    };
+    
+    var pieChart = new Chart(document.querySelector("#pie-chart"), pieChartOptions);
+    pieChart.render();
+
+  });
+
+
+
+  /*----- ADD EXPENSE ENTRY -----*/
+
+  // Dynamically add new expense entry when pressing "Add Entry" button
+  var addEntryButton = document.getElementById("add-entry");
+  var expenseContainer = document.getElementById("expense-container");
+  var expenseCountInput = document.getElementById("expense_count");
+
+  var expenseCount = 0; // Track the number of expense entries
+
+  if (addEntryButton) {
+    addEntryButton.addEventListener("click", function () {
+      var newEntry = document.createElement("div");
+      newEntry.classList.add("expense-entry");
+      newEntry.innerHTML = `
+        <label for="category">Category:</label>
+        <select name="category[]" class="category" required>
+          <option value="">Select a category</option>
+          <option value="Childcare">Childcare</option>
+          <option value="Debt-Payments">Debt Payments</option>
+          <option value="Dining Out">Dining Out</option>
+          <option value="Education">Education</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Gifts/Donations">Gifts/Donations</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Health/Medical">Health/Medical</option>
+          <option value="Hobbies/Recreation">Hobbies/Recreation</option>
+          <option value="Home-Maintenance">Home Maintenance</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Pet-Expenses">Pet Expenses</option>
+          <option value="Personal-Care">Personal Care</option>
+          <option value="Rent/Mortgage">Rent/Mortgage</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Subscriptions">Subscriptions</option>
+          <option value="Taxes">Taxes</option>
+          <option value="Transportation">Transportation</option>
+          <option value="Travel">Travel</option>
+          <option value="Utilities">Utilities</option>
+          <option value="">------</option>
+          <option value="Miscellaneous">Miscellaneous</option>
+        </select>
+
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount[]" class="amount" required>
+
+        <span class="remove-entry material-icons-outlined">delete</span>
       `;
 
       expenseContainer.appendChild(newEntry);
-    
-      // Assign value based on count of expense entries
-      expenseCountInput.value = document.getElementsByClassName('expense-entry').length + 1;
-    
-      // Add event listener to remove button
-      const removeButton = document.createElement('button');
-      removeButton.className = 'remove-entry';
-      removeButton.innerHTML = 'Remove';
-      removeButton.addEventListener('click', function () {
-        newEntry.remove();
-
-        // Assign value to expenseCountInput based on count of expense entries
-        expenseCountInput.value = document.getElementsByClassName('expense-entry').length - 1;
-      });
-    
-      newEntry.appendChild(removeButton);
+      expenseCount++; // Increment the expense count
+      expenseCountInput.value = expenseCount; // Update expense count input value
     });
+    };
 
+  // Dynamically remove expense entry when pressing "Remove Entry" button
+  if (expenseContainer) {
+    expenseContainer.addEventListener("click", function (event) {
+        var targetElement = event.target; // Clicked element
 
-
-  /*----- CHARTS -----*/
-
-  /* COLUMN CHART */ 
-  var columnChartOptions = {
-    colors:['#2e7d32', '#d50000'],
-    series: [{
-    name: 'Income',
-    type: 'column',
-    data: [4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2,]
-  }, {
-    name: 'Expenses',
-    type: 'column',
-    data: [3.2, 3, 2.5, 2, 2, 2.6, 3, 3.2, 4.5, 3.5, 4, 4.7,]
-  }],
-    chart: {
-    type: 'bar',
-    height: 350,
-    background: "transparent",
-    
-    animations: {
-      enabled: true,
-      easing: 'easeinout',
-      speed: 800,
-      animateGradually: {
-          enabled: true,
-          delay: 150
-      },
-      dynamicAnimation: {
-          enabled: true,
-          speed: 350
-      }
-    }
-  },
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      columnWidth: '40%',
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  fill: {
-    opacity: 1, 
-  },
-  grid: {
-    borderColor: "#55596e",
-    yaxis: {
-      lines: {
-        show: true,
-      }
-    }
-  },
-  legend: {
-    labels: {
-      color: "#f5f7ff",
-    },
-    color: "#f5f7ff",
-    show: true,
-    position: "bottom",
-  },
-  stroke: {
-    colors: ["transparent"],
-    show: true,
-    width: 2,
-  },
-  tooltip: {
-    shared: true,
-    intersect: false,
-    theme: "dark",
-  },
-  xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    title: {
-      style: {
-        color: "#f5f7ff",
-      },
-    },
-    axisBorder: {
-      show: true,
-      color: "#55596e",
-    },
-    axisTicks: {
-      show: true,
-      color: "#55596e",
-    },
-    labels: {
-      style: {
-        colors: "#f5f7ff",
-      }
-    },
-  },
-  yaxis: [
-    {
-      axisTicks: {
-        show: true,
-        color: "#55596e",
-      },
-      axisBorder: {
-        show: true,
-        color: "#55596e",
-      },
-      labels: {
-        style: {
-          color: "#f5f7ff",
+        if (targetElement.classList.contains("remove-entry")) {
+          targetElement.parentElement.remove();
+          expenseCount--; // Decrement the expense count
+          expenseCountInput.value = expenseCount; // Update the hidden expense count input value
         }
-      },
-      title: {
-        text: "Income (thousands)",
-        style: {
-          color: "#f5f7ff",
-        }
-      },
-    },
-    {
-      seriesName: 'Income',
-      opposite: true,
-      axisTicks: {
-        show: true,
-        color: "#55596e",
-      },
-      axisBorder: {
-        show: true,
-        color: "#55596e",
-      },
-      labels: {
-        style: {
-          color: "#f5f7ff",
-        }
-      },
-      title: {
-        text: "Expenses (thousands)",
-        style: {
-          color: "#f5f7ff",
-        }
-      },
-    },
-  ],
-  tooltip: {
-    y: {
-      formatter: function (val) {
-        return "$ " + val + "00"
-      }
-    }
-  },
-  };
-
-  var columnChart = new ApexCharts(document.querySelector("#column-chart"), columnChartOptions);
-  columnChart.render();
-
-  /* DONUT CHART */ 
+      });
+  }
 
 });

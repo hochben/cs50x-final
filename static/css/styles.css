@@ -89,23 +89,21 @@ hr {
 .header-right > .dropdown-menu {
 	display: none;
 	background-color: #fff;
-  color: #9799ab;
+  color: #21232d;
 	border: 1px solid #666666;
 	border-radius: 4px;
 	padding: 10px;
   margin: 10px;
   position: absolute;
-  float: right;
+  right: 0;
 }
 
 .header-right > #dropdown-arrow {
 	cursor: pointer;
   position: relative;
-  float: right;
 }
 
 .header-right > .dropdown-menu ul {
-	float: right;
   padding: 0;
   margin: 0;
 }
@@ -222,9 +220,57 @@ hr {
   justify-content: space-between;
 }
 
-.main-title > p {
+.main-title > h1 {
   font-size: 20px;
 }
+
+/* Index */
+
+.welcome {
+  margin-top: 20px;
+  margin-bottom: 50px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.budget-info {
+  margin-bottom: 50px;
+}
+
+.budget-info > p  {
+  margin: 0;
+  font-weight: 700;
+}
+
+.budget-info > p > span {
+  font-weight: 500;
+}
+
+/* Budget Form */
+
+form > #add-entry > span {
+  margin: 10px 0;
+  padding: 10px 0px;
+  border-radius: 5px;
+}
+
+form > #add-entry > span:hover {
+  cursor: pointer;
+  color: #239d56;
+}
+
+.expense-entry > .remove-entry  {
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.expense-entry > .remove-entry:hover {
+  cursor: pointer;
+  color: red;
+}
+
+
+/*----- CARDS ----- */
 
 .main-cards {
   display: grid;
@@ -285,6 +331,10 @@ hr {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
+
+
+
+/*----- CHARTS ----- */
 
 .charts-card {
   background-color: #ffffff;

@@ -7,10 +7,14 @@
 {% block main %}
   <h1>Create Budget</h1>
 
-  <h2>Income</h2>
+  <h2>Name</h2>
   <form action="/create_budget" method="POST">
-    <label for="income">Income:</label>
-    <input type="number" id="income" name="income" required>
+    <label for="name">Budget Name:</label>
+    <input type="text" id="name" name="budget_name" placeholder="My Budget" required>
+
+    <h2>Income</h2>
+      <label for="income">Income:</label>
+      <input type="number" id="income" name="income" placeholder="0.00" required>
 
     <h2>Expenses</h2>
     <div id="expense-container">
@@ -35,20 +39,23 @@
           <option value="Shopping">Shopping</option>
           <option value="Subscriptions">Subscriptions</option>
           <option value="Transportation">Transportation</option>
+          <option value="Taxes">Taxes</option>
           <option value="Travel">Travel</option>
           <option value="Utilities">Utilities</option>
           <option value="">------</option>
           <option value="Miscellaneous">Miscellaneous</option>
         </select>
 
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount${entryIndex}" name="amount[]" class="amount" required>
+        <label for="amount[]">Amount:</label>
+        <input type="number" id="amount" name="amount[]" class="amount" placeholder="0.00" required>
       </div>
     </div>
-    <button type="button" id="add-entry">Add Entry</button>
+    <div id="add-entry" class="button">
+      <span class="material-icons-outlined">add_box</span>
+    </div>
 
     <!-- Hidden expense count to keep track of expense entries -->
-    <input type="hidden" id="expense_count" name="expense_count" value="0">
+    <input type="hidden" id="expense_count" name="expense_count" value="1">
     
     <input type="submit" value="Create Budget">
   </form>

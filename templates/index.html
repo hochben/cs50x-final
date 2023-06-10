@@ -7,12 +7,27 @@
 <!-- Main -->
 {% block main %}
   <div class="main-title">
-    <p class="font-weight-bold">DASHBOARD</p>
+    <h1 class="font-weight-bold">DASHBOARD</h1>
   </div>
 
   <div class="welcome">
-    <p class="font">Welcome, {{ username }}!</p>
+    <p class="text-primary">Welcome to your Budget Manager,
+      <span class="text-blue">{{ username }}</span>!</p>
   </div>
+
+  {% if budget_name and budget_date and budget_time %}
+    <div class="budget-info">
+        <p class="text-primary">BUDGET NAME: <span>{{ budget_name }}</span></p>
+        <p class="text-primary">CREATED ON: <span>{{ budget_date }} at {{ budget_time }}</span></p>
+    </div>
+  {% else %}
+    <div class="budget-info">
+        <p class="text-primary font-weight-bold">You have no budget yet.</p>
+        <p class="text-primary font-weight-bold">
+            <a href="/create_budget">Create a budget</a> to get started.</p>
+    </div>
+  {% endif %}
+
 
   <!-- Cards -->
   <div class="main-cards">
@@ -22,7 +37,7 @@
         <p class="text-primary font-weight-bold">ACCOUNT BALANCE</p>
         <span class="material-icons-outlined text-blue">account_balance</span>
       </div>
-      <p class="text-primary font-weight-bold">test</p>
+      <p class="text-primary font-weight-bold">TODO</p>
     </div>
 
     <div class="card">
@@ -30,7 +45,7 @@
         <h3>CASH</h3>
         <span class="material-icons-outlined text-orange">account_balance_wallet</span>
       </div>
-      <p class="text-primary font-weight-bold">test</p>
+      <p class="text-primary font-weight-bold">TODO</p>
     </div>
 
     <div class="card">
@@ -38,7 +53,7 @@
         <h3>INCOME</h3>
         <span class="material-icons-outlined text-green">paid</span>
       </div>
-      <p class="text-primary font-weight-bold">test</p>
+      <p class="text-primary font-weight-bold">TODO</p>
     </div>
 
     <div class="card">
@@ -46,7 +61,7 @@
         <h3>EXPENSES</h3>
         <span class="material-icons-outlined text-red">payments</span>
       </div>
-      <p class="text-primary font-weight-bold">test</p>
+      <p class="text-primary font-weight-bold">TODO</p>
     </div>
 
   </div>
@@ -57,12 +72,12 @@
 
     <div class="charts-card">
       <h2 class="chart-title">Overview</h2>
-      <div id="column-chart"></div>
+      <canvas id="column-chart"></canvas>
     </div>
 
     <div class="charts-card">
       <h2 class="chart-title">Expense Categories</h2>
-      <div id="donut-chart"></div>
+      <canvas id="pie-chart"></canvas>
     </div>
 
   </div>
