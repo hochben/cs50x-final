@@ -14,7 +14,7 @@
 
     <h2>Income</h2>
       <label for="income">Income:</label>
-      <input type="number" id="income" name="income" placeholder="0.00" required>
+      <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" required>
 
     <h2>Expenses</h2>
     <div id="expense-container">
@@ -47,16 +47,17 @@
         </select>
 
         <label for="amount[]">Amount:</label>
-        <input type="number" id="amount" name="amount[]" class="amount" placeholder="0.00" required>
+        <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00" step="0.05" required>
       </div>
     </div>
-    <div id="add-entry" class="button">
-      <span class="material-icons-outlined">add_box</span>
-    </div>
+    <span id="add-entry" class="material-icons-outlined">add_box</span>
 
-    <!-- Hidden expense count to keep track of expense entries -->
-    <input type="hidden" id="expense_count" name="expense_count" value="1">
+    <div class="submit-button">
+      <!-- Hidden expense count to keep track of expense entries -->
+      <input type="hidden" id="expense_count" name="expense_count" value="1">
+      
+      <input type="submit" value="Create Budget">
+    </div>
     
-    <input type="submit" value="Create Budget">
   </form>
 {% endblock %}

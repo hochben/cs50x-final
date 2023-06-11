@@ -248,13 +248,13 @@ hr {
 
 /* Budget Form */
 
-form > #add-entry > span {
+form > #add-entry {
   margin: 10px 0;
   padding: 10px 0px;
   border-radius: 5px;
 }
 
-form > #add-entry > span:hover {
+form > #add-entry:hover {
   cursor: pointer;
   color: #239d56;
 }
@@ -326,15 +326,15 @@ form > #add-entry > span:hover {
   font-size: 35px;
 }
 
+
+
+/*----- CHARTS ----- */
+
 .charts {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
-
-
-
-/*----- CHARTS ----- */
 
 .charts-card {
   background-color: #ffffff;

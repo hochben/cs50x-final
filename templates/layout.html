@@ -11,12 +11,15 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
+    <!-- Favicon -->
+    <link rel="icon" type="svg" href="../static/img/favicon.svg">
+
     <!-- Charts.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js" type="module"></script>
     
     <!-- Custom CSS and JS files -->
-    <link href="../static/css/styles.css" rel="stylesheet">
-    <script src="../static/js/scripts.js"></script>
+    <link href="../static/css/style.css" rel="stylesheet">
+    <script src="../static/js/script.js"></script>
 
     <title>{% block title %}{% endblock %}</title>
   </head>
@@ -30,9 +33,7 @@
         <div class="menu-icon" onclick="openSidebar()">
           <span class="material-icons-outlined">menu</span>
         </div>
-        <div class="header-left">
-          <span class="material-icons-outlined">search</span>
-        </div>
+        <div class="header-left"></div>
         <div class="header-right">
           {% if session["user_id"] %}
             <span id="username" class="font-weight-bold">{{ username }}</span>
@@ -95,8 +96,6 @@
       </aside>
       <!-- End Sidebar -->
 
-      
-
       <!-- Main -->
       <main class="main-container">
         {% with messages = get_flashed_messages() %}
@@ -108,7 +107,6 @@
                 </ul>
               {% endif %}
             {% endwith %}
-        <!-- End Flash messages -->
         
         {% block main %}{% endblock %}
       </main>

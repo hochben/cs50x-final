@@ -52,82 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Fetch budget_data from Flask route
   fetch("/budget_data")
-  .then(response => response.json())
-  .then(data => {
-
-    // Extract data from JSON response
-    var expenseCategory = data.expense_category;
-    var expenseAmount = data.expense_amount;
-    var incomeCategory = data.income_category;
-    var incomeAmount = data.income_amount;
-
-    // Log data to console
-    console.log(expenseCategory);
-    console.log(expenseAmount);
-    console.log(incomeCategory);
-    console.log(incomeAmount);
-
-    /* PIE CHART */
-    var pieChartOptions = {
-      series: amount,
-      chart: {
-        type: 'donut',
-        height: 350,
-        background: "transparent",
-        animations: {
-          enabled: true,
-          easing: 'easeinout',
-          speed: 800,
-          animateGradually: {
-              enabled: true,
-              delay: 150
-          },
-          dynamicAnimation: {
-              enabled: true,
-              speed: 350
-          }
-        }
-      },
-      labels: category,
+    .then(response => response.json())
+    .then(data => {
+      // Debugging
+      console.log(data);
       
-      fill: {
-        opacity: 1,
-      },
-      legend: {
-        labels: {
-          color: "#f5f7ff",
-        },
-        color: "#f5f7ff",
-        show: true,
-        position: "bottom",
-      },
-      stroke: {
-        colors: ["transparent"],
-        show: true,
-        width: 2,
-      },
-      tooltip: {
-        shared: true,
-        intersect: false,
-        theme: "dark",
-      },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }]
-    };
-    
-    var pieChart = new Chart(document.querySelector("#pie-chart"), pieChartOptions);
-    pieChart.render();
 
-  });
+      // Create columnChart
+      
+
+      // Create pieChart
+      
+    });
 
 
 
@@ -173,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </select>
 
         <label for="amount">Amount:</label>
-        <input type="number" name="amount[]" class="amount" required>
+        <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00" required>
 
         <span class="remove-entry material-icons-outlined">delete</span>
       `;

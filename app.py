@@ -1,6 +1,5 @@
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, date
 import secrets
@@ -27,18 +26,19 @@ db.init_app(app)
 with app.app_context():
         db.create_all()
 
+
 @app.route('/')
 @login_required
 def index():
     """Show dashboard"""
 
     # Get the current user
-    current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
+    current_user = Users.query.filter_by(user_id=session["user_id"]).first()
     # Retrieve the username from the current_user result object
     username = current_user.username
 
     # Get the current budget
-    current_budget = db.session.execute(db.select(["*"]).where(Budget.name == session.get("budget_name"))).first()
+    current_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
 
     # Check if current_budget is None
     if current_budget is None:
@@ -77,13 +77,14 @@ def register():
             return errorhandler("passwords do not match", 400)
 
         # Check if Username already exists
-        existing_user = db.session.execute(db.select(Users).where(Users.username == username)).first()
+        existing_user = Users.query.filter_by(username=username).first()
         if existing_user:
             return errorhandler("Username already exists", 400)
 
         # Insert new User into database
         hashed_password = generate_password_hash(password)
-        db.session.execute(db.insert(Users).values(username=username, hash=hashed_password))
+        new_user = Users(username=username, hash=hashed_password)
+        db.session.add(new_user)
         db.session.commit()
 
         # Redirect User to login page
@@ -116,14 +117,14 @@ def login():
             return errorhandler("must provide password", 400)
 
         # Query database for Username
-        rows = db.session.execute(db.select(["*"]).where(Users.username == username)).first()
+        user = Users.query.filter_by(username=username).first()
 
         # Ensure Username exists and password is correct
-        if rows is None or not check_password_hash(rows.hash, password) or rows.username != username:
+        if user is None or not check_password_hash(user.hash, password) or user.username != username:
             return errorhandler("invalid username and/or password", 400)
 
         # Remember which User has logged in
-        session["user_id"] = rows.user_id
+        session["user_id"] = user.user_id
 
         # Redirect User to home page
         return redirect("/")
@@ -153,9 +154,9 @@ def change_password():
     if request.method == "POST":
 
         # Get the current user
-        current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
+        current_user = Users.query.get(session["user_id"])
 
-        # Retrieve the username from the current_user result object
+        # Retrieve the username from the current_user object
         username = current_user.username
 
         # Retrieve the current password entered by the User
@@ -177,7 +178,7 @@ def change_password():
         new_hashed_password = generate_password_hash(new_password)
 
         # Update the User's password in the database
-        db.session.execute(db.update(Users).where(Users.user_id == current_user.user_id).values(hash=new_hashed_password))
+        current_user.hash = new_hashed_password
         db.session.commit()
 
         # Redirect User to home page
@@ -187,8 +188,8 @@ def change_password():
     # User reached route via GET
     else:
         # Get the current user
-        current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
-        # Retrieve the username from the current_user result object
+        current_user = Users.query.get(session["user_id"])
+        # Retrieve the username from the current_user object
         username = current_user.username
         
         return render_template("change_password.html", username=username)
@@ -202,55 +203,59 @@ def create_budget():
     if request.method == "POST":
 
         # Get the current user
-        current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
+        current_user = Users.query.get(session["user_id"])
 
         # Create a new budget
         budget_name = request.form.get("budget_name")
-        existing_budget = db.session.execute(db.select(Budget).where(Budget.name == budget_name)).first()
+        existing_budget = Budget.query.filter_by(name=budget_name).first()
 
-        # If budget already exists, use the existing budget, otherwise create a new budget
         if existing_budget:
+            existing_budget.name = budget_name
             new_budget = existing_budget
         else:
             new_budget = Budget(user_id=current_user.user_id, name=budget_name)
-        
-        # Get the budget creation date and time
-        now = datetime.now()
-        new_budget.date = date.today()
-        new_budget.time = now.time()
 
-        # Commit the new_budget to generate its ID
+        # Commit the new_budget to generate an id
         db.session.add(new_budget)
         db.session.commit()
 
         # Get income
         income = request.form.get("income")
 
-        # Create a new income entry 
-        income_entry = Income(user_id=current_user.user_id, budget_id=new_budget.id, amount=income)
+        # Check if income entry already exists
+        existing_income = Income.query.filter_by(user_id=current_user.user_id, budget_id=new_budget.id).first()
 
-        # Create expense entries
+        if existing_income:
+            existing_income.amount = income
+        else:
+            income_entry = Income(user_id=current_user.user_id, budget_id=new_budget.id, amount=income)
+            db.session.add(income_entry)
+
+        # Create or update expense entries
         categories = request.form.getlist("category[]")
         amounts = request.form.getlist("amount[]")
+
         for i in range(len(categories)):
-            expense_entry = Expense(
-                user_id=current_user.user_id,
-                budget_id=new_budget.id,
-                amount=amounts[i],
-                category=categories[i]
-            )
-            db.session.add(expense_entry)
+            category = categories[i]
+            amount = amounts[i]
+            
+            existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=new_budget.id, category=category).first()
+            
+            if existing_expense:
+                existing_expense.amount = amount
+            else:
+                expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
+                db.session.add(expense_entry)
 
         # Commit all changes to the database
-        db.session.add(new_budget)
-        db.session.add(income_entry)
         db.session.commit()
-
-        # Save date and time of budget creation in session
-        session["budget_name"] = budget_name
-        session["budget_date"] = new_budget.date.strftime("%d/%m/%Y")
-        session["budget_time"] = new_budget.time.strftime("%H:%M:%S")
         
+        # Set the session variables
+        session["username"] = current_user.username
+        session["budget_name"] = new_budget.name
+        session["budget_date"] = new_budget.date
+        session["budget_time"] = new_budget.time
+
         # Redirect user to home page
         flash('Budget created successfully!', 'success')
         return redirect("/")
@@ -258,8 +263,8 @@ def create_budget():
     # User reached route via GET
     else:
         # Get the current user
-        current_user = db.session.execute(db.select(["*"]).where(Users.user_id == session["user_id"])).first()
-        # Retrieve the username from the current_user result object
+        current_user = Users.query.get(session["user_id"])
+        # Retrieve the username from the current_user object
         username = current_user.username
         
         return render_template("create_budget.html", username=username)
@@ -268,9 +273,43 @@ def create_budget():
 @app.route("/budget_data")
 @login_required
 def budget_data():
-    # TODO: Add functionality to retrieve budget data from database
-    return jsonify()
+    # Get the current user
+    current_user = Users.query.get(session["user_id"])
 
+    # Retrieve income and expense data for the current user
+    income = Income.query.filter(Income.user_id == current_user.user_id).with_entities(Income.amount).first()
+    expenses = Expense.query.filter(Expense.user_id == current_user.user_id).with_entities(Expense.amount, Expense.category).all()
+
+    # Prepare the data for chart.js
+    
+    # Create a dictionary with income data
+    income_data = {
+        'label': 'Income',
+        'amount': income.amount
+    }
+
+    # Create lists for expense labels and amounts
+    expense_labels = []
+    expense_amounts = []
+
+    # Add expense labels and amounts to the lists
+    for expense in expenses:
+        expense_labels.append(expense.category)
+        expense_amounts.append(expense.amount)
+
+    # Create a dictionary with expense data
+    expense_data = {
+        'categories': expense_labels,
+        'amounts': expense_amounts
+    }
+
+    # Create a dictionary with income and expense data
+    budget_data = {
+        'income': income_data,
+        'expenses': expense_data
+    }
+
+    return jsonify(budget_data)
 
 # Run the application
 if __name__ == '__main__':
