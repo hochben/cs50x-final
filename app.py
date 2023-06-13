@@ -297,16 +297,23 @@ def budget_data():
         expense_labels.append(expense.category)
         expense_amounts.append(expense.amount)
 
+    # Calculate total expenses
+    total_expenses = {
+        'label': 'Total Expenses',
+        'amount': sum(expense_amounts)
+    }
+
     # Create a dictionary with expense data
     expense_data = {
         'categories': expense_labels,
         'amounts': expense_amounts
     }
 
-    # Create a dictionary with income and expense data
+    # Create a dictionary with income, expense data and total expenses
     budget_data = {
         'income': income_data,
-        'expenses': expense_data
+        'expenses': expense_data,
+        'total_expenses': total_expenses
     }
 
     return jsonify(budget_data)

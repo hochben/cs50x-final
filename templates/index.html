@@ -72,12 +72,18 @@
 
     <div class="charts-card">
       <h2 class="chart-title">Overview</h2>
-      <canvas id="column-chart"></canvas>
+      <!--  Canvas needs to have a parent div for only the chart
+            See https://www.chartjs.org/docs/latest/configuration/responsive.html#important-note -->
+      <div class="charts-container">
+        <canvas id="column-chart"></canvas>
+      </div>
     </div>
 
     <div class="charts-card">
       <h2 class="chart-title">Expense Categories</h2>
-      <canvas id="pie-chart"></canvas>
+      <div class="charts-container">
+        <canvas id="pie-chart"></canvas>
+      </div>
     </div>
 
   </div>
