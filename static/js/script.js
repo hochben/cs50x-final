@@ -60,13 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const expenseData = budget_data.expenses;
     const totalExpenses = budget_data.total_expenses;
 
-    // Debugging
-    console.log(incomeData);
-    console.log(expenseData);
-    console.log(totalExpenses);
-
     // Create columnChart
-    const columnChart = new Chart(document.getElementById('column-chart'), {
+    new Chart(document.getElementById('column-chart'), {
       type: 'bar',
       data: {
         labels: ['Income', 'Total Expenses'],
@@ -111,10 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    console.log(columnChart);
 
     // Create pieChart
-    const pieChart = new Chart(document.getElementById('pie-chart'), {
+    new Chart(document.getElementById('pie-chart'), {
       type: 'doughnut',
       data: {
         labels: expenseData.categories,
@@ -151,12 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: false
-          },
-          title: {
             display: true,
-            text: 'Total Expenses'
-          }
+            position: 'top',
+            labels: {
+              boxWidth: 20,
+              padding: 10,
+              usePointStyle: true,
+            }
+          },
         },
         layout: {
           padding: {
@@ -187,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
       newEntry.classList.add("expense-entry");
       newEntry.innerHTML = `
         <label for="category">Category:</label>
-        <select name="category[]" class="category" required>
+        <select name="category[]" class="category">
           <option disabled selected value="">Select a category</option>
           <option value="Childcare">Childcare</option>
           <option value="Debt-Payments">Debt Payments</option>
@@ -213,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </select>
 
         <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00" required>
+        <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00">
 
         <span class="remove-entry material-icons-outlined">delete</span>
       `;

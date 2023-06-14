@@ -5,7 +5,7 @@ from datetime import datetime, date
 import secrets
 
 from helpers import errorhandler, login_required
-from models import db, Users, Budget, Income, Expense
+from models import db, Users, Budget, Income, Expense, Savings
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -45,14 +45,35 @@ def index():
         budget_name = ""
         budget_date = ""
         budget_time = ""
+        income = 0
+        expenses = 0
+        savings = 0
     else:
-        # Retrieve the budget name, date, and time from the current_budget result object
+        # Retrieve the budget name, date, and time from the current_budget
         budget_name = current_budget.name
         budget_date = current_budget.date
         budget_time = current_budget.time
 
-    return render_template("index.html", username=username, budget_name=budget_name, budget_date=budget_date, budget_time=budget_time)
+        # Retrieve income and total expenses
+        incomes = Income.query.filter(Income.user_id == current_user.user_id).with_entities(Income.amount).first()
+        income = incomes[0] if incomes else 0
+        savings = Savings.query.filter(Savings.user_id == current_user.user_id).with_entities(Savings.amount).first()
+        savings = savings[0] if savings else 0
+        expenses = Expense.query.filter(Expense.user_id == current_user.user_id).with_entities(Expense.amount).all()
 
+
+        expense_amounts = []
+
+        # Add expense amounts to the lists
+        for expense in expenses:
+            expense_amounts.append(expense.amount)
+
+        # Calculate total expenses
+        total_expenses = sum(expense_amounts) if expense_amounts else 0
+
+    return render_template("index.html", username=username,budget_name=budget_name, budget_date=budget_date, budget_time=budget_time,
+                       income=income, expenses=total_expenses, savings=savings)
+        
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -227,6 +248,9 @@ def create_budget():
 
         if existing_income:
             existing_income.amount = income
+        elif income is None:
+            income_entry = Income(user_id=current_user.user_id, budget_id=new_budget.id, amount=0)
+            db.session.add(income_entry)
         else:
             income_entry = Income(user_id=current_user.user_id, budget_id=new_budget.id, amount=income)
             db.session.add(income_entry)
@@ -243,9 +267,26 @@ def create_budget():
             
             if existing_expense:
                 existing_expense.amount = amount
+            elif amount is None:
+                expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=0, category=category)
+                db.session.add(expense_entry)
             else:
                 expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
                 db.session.add(expense_entry)
+        
+        # Create or update savings entry
+        savings = request.form.get("savings")
+
+        existing_savings = Savings.query.filter_by(user_id=current_user.user_id, budget_id=new_budget.id).first()
+            
+        if existing_savings:
+            existing_savings.amount = savings
+        elif savings is None:
+            savings_entry = Savings(user_id=current_user.user_id, budget_id=new_budget.id, amount=0)
+            db.session.add(savings_entry)
+        else:
+            savings_entry = Savings(user_id=current_user.user_id, budget_id=new_budget.id, savings=savings)
+            db.session.add(savings_entry)
 
         # Commit all changes to the database
         db.session.commit()

@@ -31,3 +31,10 @@ class Expense(db.Model):
     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
     amount = db.Column(db.Float(precision=2), nullable=False)
     category = db.Column(db.String(20), nullable=False)
+
+class Savings(db.Model):
+    """Savings table"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"), nullable=False)
+    amount = db.Column(db.Float(precision=2), nullable=False)
