@@ -34,11 +34,14 @@ def index():
 
     # Get the current user
     current_user = Users.query.filter_by(user_id=session["user_id"]).first()
-    # Retrieve the username from the current_user result object
     username = current_user.username
 
     # Get the current budget
     current_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
+    existing_budget = True if current_budget else False
+
+    # Initialize budget_data
+    budget_data = {}
 
     # Check if current_budget is None
     if current_budget is None:
@@ -46,7 +49,7 @@ def index():
         budget_date = ""
         budget_time = ""
         income = 0
-        expenses = 0
+        total_expenses = 0
         savings = 0
     else:
         # Retrieve the budget name, date, and time from the current_budget
@@ -71,8 +74,16 @@ def index():
         # Calculate total expenses
         total_expenses = sum(expense_amounts) if expense_amounts else 0
 
-    return render_template("index.html", username=username,budget_name=budget_name, budget_date=budget_date, budget_time=budget_time,
-                       income=income, expenses=total_expenses, savings=savings)
+        # Create a dictionary with income, expense data, and total expenses
+        budget_data = {
+            'income': income,
+            'expenses': expenses,
+            'total_expenses': total_expenses
+        }
+
+    return render_template("index.html", username=username, budget_data=budget_data, existing_budget=existing_budget,
+                           budget_name=budget_name, budget_date=budget_date, budget_time=budget_time,
+                           income=income, expenses=total_expenses, savings=savings)
         
 
 @app.route("/register", methods=["GET", "POST"])
@@ -176,8 +187,6 @@ def change_password():
 
         # Get the current user
         current_user = Users.query.get(session["user_id"])
-
-        # Retrieve the username from the current_user object
         username = current_user.username
 
         # Retrieve the current password entered by the User
@@ -221,26 +230,27 @@ def change_password():
 def create_budget():
     """Create budget"""
 
+    # Get the current user
+    current_user = Users.query.get(session["user_id"])
+    username = current_user.username
+    existing_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
+
     if request.method == "POST":
-
-        # Get the current user
-        current_user = Users.query.get(session["user_id"])
-
-        # Create a new budget
-        budget_name = request.form.get("budget_name")
-        existing_budget = Budget.query.filter_by(name=budget_name).first()
+        # Get form data
+        budget_name = request.form.get('budget_name')
+        budget_date = request.form.get('budget_date')
+        budget_time = request.form.get('budget_time')
 
         if existing_budget:
             existing_budget.name = budget_name
+            existing_budget.date = budget_date
+            existing_budget.time = budget_time
             new_budget = existing_budget
         else:
-            new_budget = Budget(user_id=current_user.user_id, name=budget_name)
-
-        # Commit the new_budget to generate an id
-        db.session.add(new_budget)
-        db.session.commit()
-
-        # Get income
+            new_budget = Budget(user_id=current_user.user_id, name=budget_name, date=budget_date, time=budget_time)
+            db.session.add(new_budget)
+        
+        # Update or create income entry
         income = request.form.get("income")
 
         # Check if income entry already exists
@@ -255,16 +265,14 @@ def create_budget():
             income_entry = Income(user_id=current_user.user_id, budget_id=new_budget.id, amount=income)
             db.session.add(income_entry)
 
-        # Create or update expense entries
-        categories = request.form.getlist("category[]")
-        amounts = request.form.getlist("amount[]")
+        # Update or create expense entries
+        expense_categories = request.form.getlist("expense_category")
+        expense_amounts = request.form.getlist("expense_amount")
 
-        for i in range(len(categories)):
-            category = categories[i]
-            amount = amounts[i]
-            
+        # Iterate through the expense categories and amounts using zip() and pair them together
+        for category, amount in zip(expense_categories, expense_amounts):
             existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=new_budget.id, category=category).first()
-            
+
             if existing_expense:
                 existing_expense.amount = amount
             elif amount is None:
@@ -273,24 +281,23 @@ def create_budget():
             else:
                 expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
                 db.session.add(expense_entry)
-        
+
         # Create or update savings entry
         savings = request.form.get("savings")
-
         existing_savings = Savings.query.filter_by(user_id=current_user.user_id, budget_id=new_budget.id).first()
-            
+
         if existing_savings:
             existing_savings.amount = savings
         elif savings is None:
             savings_entry = Savings(user_id=current_user.user_id, budget_id=new_budget.id, amount=0)
             db.session.add(savings_entry)
         else:
-            savings_entry = Savings(user_id=current_user.user_id, budget_id=new_budget.id, savings=savings)
+            savings_entry = Savings(user_id=current_user.user_id, budget_id=new_budget.id, amount=savings)
             db.session.add(savings_entry)
 
         # Commit all changes to the database
         db.session.commit()
-        
+
         # Set the session variables
         session["username"] = current_user.username
         session["budget_name"] = new_budget.name
@@ -303,12 +310,30 @@ def create_budget():
     
     # User reached route via GET
     else:
-        # Get the current user
-        current_user = Users.query.get(session["user_id"])
-        # Retrieve the username from the current_user object
-        username = current_user.username
+        # Retrieve existing budget details for the current user
+        existing_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
         
-        return render_template("create_budget.html", username=username)
+        # Query existing expense categories for the current user and budget
+        if existing_budget is not None:
+            existing_expenses = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id).all()
+        else:
+            existing_expenses = []
+
+        # Get all available categories
+        all_categories = [
+            "Childcare", "Debt-Payments", "Dining Out", "Education", "Entertainment", "Gifts/Donations",
+            "Groceries", "Health/Medical", "Hobbies/Recreation", "Home-Maintenance", "Insurance",
+            "Pet-Expenses", "Rent/Mortgage", "Shopping", "Subscriptions", "Transportation", "Taxes",
+            "Travel", "Utilities", "Miscellaneous"
+        ]
+
+        # Extract used categories from existing expenses
+        used_categories = [expense.category for expense in existing_expenses]
+
+        # Calculate unused categories
+        unused_categories = list(set(all_categories) - set(used_categories))
+
+        return render_template("create_budget.html", username=username, existing_expenses=existing_expenses, unused_categories=unused_categories)      
 
 
 @app.route("/budget_data")
@@ -322,12 +347,17 @@ def budget_data():
     expenses = Expense.query.filter(Expense.user_id == current_user.user_id).with_entities(Expense.amount, Expense.category).all()
 
     # Prepare the data for chart.js
-    
     # Create a dictionary with income data
-    income_data = {
-        'label': 'Income',
-        'amount': income.amount
-    }
+    if income:
+        income_data = {
+            'label': 'Income',
+            'amount': income.amount
+        }
+    else:
+        income_data = {
+            'label': 'Income',
+            'amount': 0
+        }
 
     # Create lists for expense labels and amounts
     expense_labels = []

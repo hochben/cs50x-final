@@ -50,132 +50,181 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /*----- CHARTS -----*/
 
-  // Fetch budget_data from Flask route
-  fetch("/budget_data")
-  .then(response => response.json())
-  .then(budget_data => {
-
-    // Extract the budget_data from the response
-    const incomeData = budget_data.income;
-    const expenseData = budget_data.expenses;
-    const totalExpenses = budget_data.total_expenses;
-
+  function createCharts(budgetData) {
+    // Extract the budgetData
+    const incomeData = budgetData.income;
+    const expenseData = budgetData.expenses;
+    const totalExpenses = budgetData.total_expenses;
+  
     // Create columnChart
     new Chart(document.getElementById('column-chart'), {
-      type: 'bar',
-      data: {
-        labels: ['Income', 'Total Expenses'],
-        datasets: [{
-          data: [incomeData.amount, totalExpenses.amount],
-          backgroundColor: [
-            'rgba(52, 121, 82, 0.8)',
-            'rgba(204, 60, 67, 0.8)'
-          ],
-          borderColor: [
-            'rgba(52, 121, 82, 0.8)',
-            'rgba(204, 60, 67, 0.8)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
+          type: 'bar',
+          data: {
+            labels: ['Income', 'Total Expenses'],
+            datasets: [{
+              data: [incomeData.amount, totalExpenses.amount],
+              backgroundColor: [
+                'rgba(52, 121, 82, 0.8)',
+                'rgba(204, 60, 67, 0.8)'
+              ],
+              borderColor: [
+                'rgba(52, 121, 82, 0.8)',
+                'rgba(204, 60, 67, 0.8)'
+              ],
+              borderWidth: 1
+            }]
           },
-          title: {
-            display: true,
-            text: 'Income vs. Total Expenses'
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              title: {
+                display: true,
+                text: 'Income vs. Total Expenses'
+              }
+            },
+            layout: {
+              padding: {
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
           }
-        },
-        layout: {
-          padding: {
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 20
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
+        });
 
 
-    // Create pieChart
-    new Chart(document.getElementById('pie-chart'), {
-      type: 'doughnut',
-      data: {
-        labels: expenseData.categories,
-        datasets: [{
-          label: 'Expense Categories',
-          data: expenseData.amounts,
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#FF8C00',
-            '#ADFF2F',
-            '#9932CC',
-            '#FF1493',
-            '#00BFFF',
-            '#8A2BE2',
-            '#00FF00',
-            '#FFD700',
-            '#DAA520',
-            '#4B0082',
-            '#800000',
-            '#228B22',
-            '#DC143C',
-            '#1E90FF',
-            '#FF00FF',
-            '#FF4500',
-            '#FF69B4',
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              boxWidth: 20,
-              padding: 10,
-              usePointStyle: true,
+        // Create pieChart
+        new Chart(document.getElementById('pie-chart'), {
+          type: 'doughnut',
+          data: {
+            labels: expenseData.categories,
+            datasets: [{
+              label: 'Expense Categories',
+              data: expenseData.amounts,
+              backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#FF8C00',
+                '#ADFF2F',
+                '#9932CC',
+                '#FF1493',
+                '#00BFFF',
+                '#8A2BE2',
+                '#00FF00',
+                '#FFD700',
+                '#DAA520',
+                '#4B0082',
+                '#800000',
+                '#228B22',
+                '#DC143C',
+                '#1E90FF',
+                '#FF00FF',
+                '#FF4500',
+                '#FF69B4',
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  boxWidth: 20,
+                  padding: 10,
+                  usePointStyle: true,
+                }
+              },
+            },
+            layout: {
+              padding: {
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20
+              }
             }
           },
-        },
-        layout: {
-          padding: {
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 20
-          }
-        }
-      },
-    });
+        });
+  }
+
+// Fetch budget_data using AJAX
+fetch("/budget_data")
+  .then(response => response.json())
+  .then(budgetData => {
+    // Call the function to create the charts with the budgetData
+    createCharts(budgetData);
+  })
+  .catch(error => {
+    console.error("Error fetching budget data:", error);
   });
 
 
 
   /*----- ADD EXPENSE ENTRY -----*/
 
+  // Define the expense categories in an array
+  const expenseCategories = [
+    "Childcare", "Debt-Payments", "Dining-Out", "Education", "Entertainment", "Gifts/Donations",
+    "Groceries", "Health/Medical", "Hobbies/Recreation", "Home-Maintenance", "Insurance",
+    "Pet-Expenses", "Rent/Mortgage", "Shopping", "Subscriptions", "Taxes",
+    "Transportation", "Travel", "Utilities", "Miscellaneous"
+  ];
+
+  // Sort the expense categories alphabetically
+  expenseCategories.sort();
+
+  // Function to sort the select menus
+  function sortSelectMenus() {
+    // Get all select menus with the "category" class
+    const selectMenus = document.getElementsByClassName("category");
+
+    // Sort each select menu alphabetically
+    Array.from(selectMenus).forEach(function (selectMenu) {
+      // Get the current selected value before sorting
+      const selectedValue = selectMenu.value;
+
+      // Sort the options alphabetically (excluding the "Select a category" option)
+      const options = Array.from(selectMenu.options);
+      options.sort(function (a, b) {
+        if (a.value === "") return -1; // Keep the "Select a category" option at the top
+        if (b.value === "") return 1;
+        return a.text.localeCompare(b.text);
+      });
+
+      // Clear the select menu
+      selectMenu.innerHTML = "";
+
+      // Add the sorted options back to the select menu
+      options.forEach(function (option) {
+        selectMenu.appendChild(option);
+      });
+
+      // Set the previously selected value (if any) after sorting
+      selectMenu.value = selectedValue;
+    });
+  }
+
+  // Call the sortSelectMenus function when the page loads
+  window.addEventListener("load", sortSelectMenus);
+
   // Dynamically add new expense entry when pressing "Add Entry" button
   let addEntryButton = document.getElementById("add-entry");
   let expenseContainer = document.getElementById("expense-container");
-  let expenseCountInput = document.getElementById("expense_count");
-
-  let expenseCount = 0; // Track the number of expense entries
 
   if (addEntryButton) {
     addEntryButton.addEventListener("click", function () {
@@ -185,27 +234,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <label for="category">Category:</label>
         <select name="category[]" class="category">
           <option disabled selected value="">Select a category</option>
-          <option value="Childcare">Childcare</option>
-          <option value="Debt-Payments">Debt Payments</option>
-          <option value="Dining-Out">Dining Out</option>
-          <option value="Education">Education</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Gifts/Donations">Gifts/Donations</option>
-          <option value="Groceries">Groceries</option>
-          <option value="Health/Medical">Health/Medical</option>
-          <option value="Hobbies/Recreation">Hobbies/Recreation</option>
-          <option value="Home-Maintenance">Home Maintenance</option>
-          <option value="Insurance">Insurance</option>
-          <option value="Pet-Expenses">Pet Expenses</option>
-          <option value="Rent/Mortgage">Rent/Mortgage</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Subscriptions">Subscriptions</option>
-          <option value="Taxes">Taxes</option>
-          <option value="Transportation">Transportation</option>
-          <option value="Travel">Travel</option>
-          <option value="Utilities">Utilities</option>
-          <option disabled value="">------</option>
-          <option value="Miscellaneous">Miscellaneous</option>
+          ${expenseCategories
+            .map(category => `<option value="${category}">${category}</option>`)
+            .join("")}
         </select>
 
         <label for="amount">Amount:</label>
@@ -215,22 +246,28 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
 
       expenseContainer.appendChild(newEntry);
-      expenseCount++; // Increment the expense count
-      expenseCountInput.value = expenseCount; // Update expense count input value
+
+      // Sort the select menus after adding the new entry
+      sortSelectMenus();
     });
-    };
+  }
 
   // Dynamically remove expense entry when pressing "Remove Entry" button
   if (expenseContainer) {
     expenseContainer.addEventListener("click", function (event) {
-        let targetElement = event.target; // Clicked element
+      let targetElement = event.target; // Clicked element
 
-        if (targetElement.classList.contains("remove-entry")) {
-          targetElement.parentElement.remove();
-          expenseCount--; // Decrement the expense count
-          expenseCountInput.value = expenseCount; // Update the hidden expense count input value
-        }
-      });
+      if (targetElement.classList.contains("remove-entry")) {
+        targetElement.parentElement.remove();
+
+        // Add the removed expense category back to unused_categories
+        let removedCategory = targetElement.previousSibling.textContent;
+        unusedCategories.push(removedCategory);
+
+      // Sort the select menus again to include the removed category
+      sortSelectMenus();
+      }
+    });
   }
 
 });

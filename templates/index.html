@@ -67,14 +67,22 @@
       <!--  Canvas needs to have a parent div for only the chart
             See https://www.chartjs.org/docs/latest/configuration/responsive.html#important-note -->
       <div class="charts-container">
-        <canvas id="column-chart"></canvas>
+        {% if budget_data %}
+          <canvas id="column-chart"></canvas>
+        {% else %}
+          <p class="text-primary"><i>Loading...</i></p>
+        {% endif %}
       </div>
     </div>
 
     <div class="charts-card">
       <h2 class="chart-title">Expense Categories</h2>
       <div class="charts-container">
-        <canvas id="pie-chart"></canvas>
+        {% if budget_data %}
+          <canvas id="pie-chart"></canvas>
+        {% else %}
+          <p class="text-primary"><i>Loading...</i></p>
+        {% endif %}
       </div>
     </div>
 

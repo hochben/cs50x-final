@@ -242,6 +242,10 @@ hr {
 
 /* Budget Form */
 
+#expense-container {
+  font-size: 18px;
+}
+
 form > #add-entry {
   margin: 10px 0;
   padding: 10px 0px;
