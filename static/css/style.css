@@ -47,6 +47,10 @@ hr {
 	border-top: 1px solid #9799ab;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
 
 /* ----- HEADER ----- */
 
@@ -243,28 +247,39 @@ hr {
 /* Budget Form */
 
 #expense-container {
-  font-size: 18px;
+  display: box;
+  margin-top: 20px;
 }
 
-form > #add-entry {
+form > span#add-entry.add-entry {
   margin: 10px 0;
   padding: 10px 0px;
   border-radius: 5px;
 }
 
-form > #add-entry:hover {
+form > span#add-entry.add-entry:hover {
   cursor: pointer;
   color: #239d56;
 }
 
-.expense-entry > .remove-entry  {
+.new-expenses > .remove-entry  {
   margin: 10px 0;
   border-radius: 5px;
 }
 
-.expense-entry > .remove-entry:hover {
+.new-expenses > .remove-entry:hover {
   cursor: pointer;
   color: red;
+}
+
+.submit > .submit-button {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #0071fb;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
 

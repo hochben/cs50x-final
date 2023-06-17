@@ -6,40 +6,68 @@
 
 {% block main %}
   <h1>Create Budget</h1>
-
-  <h2>Name</h2>
   <form action="/create_budget" method="POST">
-    <label for="name">Budget Name:</label>
-    <input type="text" id="name" name="budget_name" placeholder="My Budget" {% if existing_budget %}disabled{% endif %} value="{{ budget_name }}" required>
-
+    {% if not existing_budget %}
+      <h2>Name</h2>
+      <label for="name">Budget Name:</label>
+      <input type="text" id="name" name="budget_name" placeholder="My Budget" {% if existing_budget %} value="{{ existing_budget.name }}" disabled {% endif %} required>
+    {% endif %}
+    
     <h2>Income</h2>
     <label for="income">Income:</label>
-    <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" value="{{ income }}">
+    {% if existing_budget %}
+      <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" value="{{ existing_budget.income.amount }}" disabled>
+      <button type="button" id="update-income">Update</button>
+      <button type="button" id="cancel-income" style="display: none;">Cancel</button>
+      <button type="button" id="submit-income" style="display: none;">Submit</button>
+    {% else %}
+      <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" required>
+    {% endif %}
 
     <h2>Savings</h2>
     <label for="savings">Savings:</label>
-    <input type="number" id="savings" name="savings" class="amount-input" placeholder="0.00" step="0.05" value="{{ savings }}">
+    {% if existing_budget %}
+      <input type="number" id="savings" name="savings" class="amount-input" placeholder="0.00" step="0.05" value="{{ existing_budget.savings.amount }}" disabled>
+      <button type="button" id="update-savings">Update</button>
+      <button type="button" id="cancel-savings" style="display: none;">Cancel</button>
+      <button type="button" id="submit-savings" style="display: none;">Submit</button>
+    {% else %}
+      <input type="number" id="savings" name="savings" class="amount-input" placeholder="0.00" step="0.05">
+    {% endif %}
 
     <h2>Expenses</h2>
+    {% if existing_budget %}
+      {% for expense in expenses %}
+        <div class="expense-entry">
+          <label>{{ expense[0] }}:</label>
+          <input type="number" name="amount_{{ loop.index }}" class="amount-input" value="{{ expense[1] }}" disabled>
+          <button type="button" class="update-expense">Update</button>
+          <button type="button" class="cancel-expense" style="display: none;">Cancel</button>
+          <button type="button" class="submit-expense" style="display: none;">Submit</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
     <div id="expense-container">
-    <div class="expense-entry">
-      <label for="category">Category:</label>
-      <select name="category[]" class="category">
-        <option disabled selected value="">Select a category</option>
-        {% for category in unused_categories %}
-          <option value="{{ category }}">{{ category }}</option>
-        {% endfor %}
-      </select>
-
-      <label for="amount[]">Amount:</label>
-      <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00" step="0.05">
+        <div id="new-expenses" class="new-expenses">
+          <label for="category">Category:</label>
+          <select name="category[]" class="category"> <!-- Update the name to "category[]" -->
+            <option disabled selected value="">Select a category</option>
+            {% for category in unused_categories %}
+              <option value="{{ category }}">{{ category}}</option>
+            {% endfor %}
+          </select>
+          <label for="amount">Amount:</label>
+          <input type="number" name="amount[]" class="amount-input" placeholder="0.00" step="0.05" required>
+        </div>
     </div>
 
-    <span id="add-entry" class="material-icons-outlined">add_box</span>
+    <!-- Add hidden unusedCategories -->
+    <span id="unused-categories" name="unused_categories" style="display: none;">{{ unused_categories_json }}</span>
 
-    <div class="submit-button">
-      <input type="submit" value="Create Budget">
+    <span id="add-entry" class="add-entry material-icons-outlined">add_box</span>
+    <div class="submit">
+      <input type="submit" class="submit-button" value="Create Budget">
     </div>
-    
   </form>
 {% endblock %}

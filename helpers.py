@@ -31,4 +31,11 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
+# Define global expense categories
+class categories():
+    expense_categories = [
+        "Childcare", "Debt Payments", "Dining Out", "Education", "Entertainment", "Gifts/Donations",
+        "Groceries", "Health/Medical", "Hobbies/Recreation", "Home Maintenance", "Insurance",
+        "Pet Expenses", "Rent/Mortgage", "Shopping", "Subscriptions", "Taxes",
+        "Transportation", "Travel", "Utilities", "Miscellaneous"
+    ]
