@@ -178,78 +178,32 @@ fetch("/budget_data")
 
   /*----- ADD EXPENSE ENTRY -----*/
 
-  // Define the expense categories in an array
-  const expenseCategories = [
-    "Childcare", "Debt-Payments", "Dining-Out", "Education", "Entertainment", "Gifts/Donations",
-    "Groceries", "Health/Medical", "Hobbies/Recreation", "Home-Maintenance", "Insurance",
-    "Pet-Expenses", "Rent/Mortgage", "Shopping", "Subscriptions", "Taxes",
-    "Transportation", "Travel", "Utilities", "Miscellaneous"
-  ];
-
-  // Sort the expense categories alphabetically
-  expenseCategories.sort();
-
-  // Function to sort the select menus
-  function sortSelectMenus() {
-    // Get all select menus with the "category" class
-    const selectMenus = document.getElementsByClassName("category");
-
-    // Sort each select menu alphabetically
-    Array.from(selectMenus).forEach(function (selectMenu) {
-      // Get the current selected value before sorting
-      const selectedValue = selectMenu.value;
-
-      // Sort the options alphabetically (excluding the "Select a category" option)
-      const options = Array.from(selectMenu.options);
-      options.sort(function (a, b) {
-        if (a.value === "") return -1; // Keep the "Select a category" option at the top
-        if (b.value === "") return 1;
-        return a.text.localeCompare(b.text);
-      });
-
-      // Clear the select menu
-      selectMenu.innerHTML = "";
-
-      // Add the sorted options back to the select menu
-      options.forEach(function (option) {
-        selectMenu.appendChild(option);
-      });
-
-      // Set the previously selected value (if any) after sorting
-      selectMenu.value = selectedValue;
-    });
-  }
-
-  // Call the sortSelectMenus function when the page loads
-  window.addEventListener("load", sortSelectMenus);
-
   // Dynamically add new expense entry when pressing "Add Entry" button
   let addEntryButton = document.getElementById("add-entry");
-  let expenseContainer = document.getElementById("expense-container");
+  let expenseContainer = document.getElementById("new-expenses");
+  let unusedCategories = JSON.parse(document.getElementById("unused-categories").textContent);
 
   if (addEntryButton) {
     addEntryButton.addEventListener("click", function () {
       let newEntry = document.createElement("div");
-      newEntry.classList.add("expense-entry");
+      newEntry.classList.add("new-expenses");
       newEntry.innerHTML = `
         <label for="category">Category:</label>
         <select name="category[]" class="category">
           <option disabled selected value="">Select a category</option>
-          ${expenseCategories
-            .map(category => `<option value="${category}">${category}</option>`)
-            .join("")}
+          ${unusedCategories.map(category => `<option value="${category}">${category}</option>`).join('')}
         </select>
-
         <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00">
+        <input type="number" id="amount" name="amount[]" class="amount-input" placeholder="0.00" step="0.05">
 
         <span class="remove-entry material-icons-outlined">delete</span>
       `;
 
       expenseContainer.appendChild(newEntry);
 
-      // Sort the select menus after adding the new entry
-      sortSelectMenus();
+      // Update unusedCategories after adding a new entry
+      unusedCategories = unusedCategories.filter(category => category !== newEntry.querySelector('.category').value);
+      updateUnusedCategories();
     });
   }
 
@@ -259,16 +213,19 @@ fetch("/budget_data")
       let targetElement = event.target; // Clicked element
 
       if (targetElement.classList.contains("remove-entry")) {
+        const category = targetElement.parentElement.querySelector('.category').value;
         targetElement.parentElement.remove();
 
-        // Add the removed expense category back to unused_categories
-        let removedCategory = targetElement.previousSibling.textContent;
-        unusedCategories.push(removedCategory);
-
-      // Sort the select menus again to include the removed category
-      sortSelectMenus();
+        // Update unusedCategories after removing an entry
+        unusedCategories.push(category);
+        updateUnusedCategories();
       }
     });
+  }
+
+  // Update the hidden unusedCategories element
+  function updateUnusedCategories() {
+    document.getElementById("unused-categories").textContent = JSON.stringify(unusedCategories);
   }
 
 

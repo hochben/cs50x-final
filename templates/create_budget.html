@@ -7,7 +7,6 @@
 {% block main %}
   <h1>Create Budget</h1>
 
-  <h2>Name</h2>
   <form action="/create_budget" method="POST">
     {% if not existing_budget %}
       <h2>Name</h2>
@@ -76,7 +75,8 @@
         </div>
     </div>
 
-    <span id="add-entry" class="material-icons-outlined">add_box</span>
+    <!-- Hidden unusedCategories -->
+    <span id="unused-categories" name="unused_categories" style="display: none;">{{ unused_categories_json }}</span>
 
      <!-- Add entry button -->
      <span id="add-entry" class="add-entry material-icons-outlined">add_box</span>
