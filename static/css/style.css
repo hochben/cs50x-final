@@ -206,7 +206,7 @@ hr {
 .main-container {
   grid-area: main;
   overflow-y: auto;
-  padding: 20px 20px;
+  padding: 0px 20px;
 }
 
 .main-title {
@@ -255,12 +255,25 @@ form > button#signin {
 /* Budget Form */
 
 #expense-container {
-  font-size: 18px;
+  margin-top: 30px;
 }
+
+.expense-entry {
+  margin-bottom: 10px;
+}
+
+form h2 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
 
 form button {
   display: inline;
-  margin: 10px;
+  margin-top: 0px !important;
+  margin: 5px;
   padding: 5px;
   border-radius: 5px;
   background-color: #888;
@@ -274,6 +287,14 @@ form button:hover {
   background-color: #666;
 }
 
+form button.cancelBtn:hover {
+  background-color: #ca1c25;
+}
+
+form button.submitBtn:hover {
+  background-color: #0073ff;
+}
+
 form > span#add-entry.add-entry {
   margin: 10px 0;
   padding: 10px 0px;
@@ -285,18 +306,22 @@ form > #add-entry:hover {
   color: #239d56;
 }
 
-.expense-entry > .remove-entry  {
+.new-expenses {
+  margin-top: 5px;
+}
+
+.new-expenses > .removeBtn {
   margin: 10px 0;
   border-radius: 5px;
 }
 
-.expense-entry > .remove-entry:hover {
+.new-expenses > .removeBtn:hover {
   cursor: pointer;
   color: red;
 }
 
-.submit > .submit-button {
-  margin-top: 10px;
+.submit > .submitFormBtn {
+  margin-top: 20px;
   padding: 10px;
   border-radius: 5px;
   background-color: #0073ff;
@@ -305,7 +330,7 @@ form > #add-entry:hover {
   cursor: pointer;
 }
 
-.submit > .submit-button:hover {
+.submit > .submitFormBtn:hover {
   cursor: pointer;
   background-color: #005eff;
 }

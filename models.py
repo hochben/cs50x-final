@@ -20,9 +20,33 @@ class Budget(db.Model):
     update_date = db.Column(db.Date, nullable=False, default=datetime.today())
     update_time = db.Column(db.Time, nullable=False, default=datetime.now().time())
 
-    income = db.relationship("Income", backref="budget")
-    expense = db.relationship("Expense", backref="budget")
-    savings = db.relationship("Savings", backref="budget")
+    income = db.relationship("Income", backref="budget", uselist=False)
+    savings = db.relationship("Savings", backref="budget", uselist=False)
+    expenses = db.relationship("Expense", backref="budget")
+
+    @property
+    def income_amount(self):
+        """Get the income amount associated with the budget"""
+        if self.income:
+            return self.income.amount
+        return 0.0
+
+    @property
+    def savings_amount(self):
+        """Get the savings amount associated with the budget"""
+        if self.savings:
+            return self.savings.amount
+        return 0.0
+
+    @property
+    def expense_categories(self):
+        """Get the expense categories associated with the budget"""
+        return [expense.category for expense in self.expenses]
+
+    @property
+    def expense_amounts(self):
+        """Get the expense amounts associated with the budget"""
+        return [expense.amount for expense in self.expenses]
 
 
 class Income(db.Model):

@@ -82,12 +82,6 @@ def index():
         savings = Savings.query.filter_by(user_id=current_user.user_id, budget_id=current_budget.id).first()
         savings = savings.amount if savings else 0
 
-
-        # Debugging
-        print(f"income: {income}")
-        print(f"total_expenses: {total_expenses}")
-        print(f"savings: {savings}")
-
         # Create a dictionary with income, savings, expenses, total expenses
         budget_data = {
             'income': income,
@@ -256,8 +250,6 @@ def create_budget():
     # User reached route via POST
     if request.method == "POST":
         # Get form data
-        print(request.form)
-
         budget_name = request.form.get('budget_name')
         budget_date = request.form.get('budget_date')
         budget_time = request.form.get('budget_time')
@@ -266,15 +258,12 @@ def create_budget():
 
         # If user has an existing budget
         if existing_budget:
-
             # Update existing budget
-            existing_budget.name = budget_name if budget_name else existing_budget.name
-            existing_budget.income = existing_budget.income if existing_budget.income else None
-            existing_budget.savings = existing_budget.savings if existing_budget.savings else None
+            existing_budget.name = budget_name or existing_budget.name
 
             # Update or create income entry
             if existing_budget.income:
-                existing_budget.income.amount = income if income else existing_budget.income.amount
+                existing_budget.income.amount = income or existing_budget.income.amount
             else:
                 income_entry = Income(user_id=current_user.user_id, budget_id=existing_budget.id, amount=income)
                 db.session.add(income_entry)
@@ -296,10 +285,9 @@ def create_budget():
             # Iterate through the expense entries
             for category, amount in expense_entries:
                 if category and amount:
-                    # Rest of the code for creating or updating expenses
-                    if category in [expense.category for expense in existing_budget.expense]:
+                    existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id, category=category).first()
+                    if existing_expense:
                         # Update existing expense
-                        existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id, category=category).first()
                         existing_expense.amount = amount
                     else:
                         # Create new expense
@@ -312,12 +300,6 @@ def create_budget():
 
             # Commit all changes to the database
             db.session.commit()
-
-            # Set the session variables
-            session["username"] = current_user.username
-            session["budget_name"] = existing_budget.name
-            session["budget_date"] = existing_budget.date
-            session["budget_time"] = existing_budget.time
 
             # Redirect user to home page
             flash('Budget updated successfully!', 'success')
@@ -341,13 +323,10 @@ def create_budget():
             expense_categories_form = request.form.getlist("category[]")
             expense_amounts = request.form.getlist("amount[]")
 
-            # Combine the categories and amounts into pairs using zip()
-            expense_entries = zip(expense_categories_form, expense_amounts)
-
             # Iterate through the expense entries
-            for category, amount in expense_entries:
+            for category, amount in zip(expense_categories_form, expense_amounts):
                 if category and amount:
-                    # Rest of the code for creating or updating expenses
+                    # Create new expense
                     expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
                     db.session.add(expense_entry)
 
@@ -370,25 +349,28 @@ def create_budget():
 
     # User reached route via GET
     else:
-        # Retrieve existing budget details for the current user
-        existing_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
+        if existing_budget:
+            # Retrieve existing income for the current user and budget
+            income = existing_budget.income_amount
 
-        # Retrieve existing income for the current user and budget
-        income = Income.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id).first() if existing_budget else None
+            # Retrieve existing expenses for the current user and budget
+            expenses = [(expense.category, expense.amount) for expense in existing_budget.expenses]
 
-        # Retrieve existing expenses for the current user and budget
-        existing_expenses = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id).all() if existing_budget else []
-        expenses = [(expense.category, expense.amount) for expense in existing_expenses]
+            # Create a list of unused expense categories
+            expense_categories = existing_budget.expense_categories
+            unused_categories = [category for category in categories.expense_categories if category not in expense_categories]
+            unused_categories_json = json.dumps(unused_categories)
 
-        expense_categories = categories.expense_categories
+            return render_template("create_budget.html", username=username, existing_budget=existing_budget,
+                                   income=income, expenses=expenses, expense_categories=expense_categories,
+                                   unused_categories=unused_categories, unused_categories_json=unused_categories_json)
+        else:
+            # No existing budget, render the template with default values
+            expense_categories = categories.expense_categories
+            unused_categories_json = json.dumps(expense_categories)
 
-        # Create a list of unused expense categories
-        unused_categories = [category for category in expense_categories if category not in [expense[0] for expense in expenses]]
-        unused_categories_json = json.dumps(unused_categories)
-
-        return render_template("create_budget.html", username=username, existing_budget=existing_budget,
-                               expenses=expenses, expense_categories=expense_categories, unused_categories=unused_categories,
-                               unused_categories_json=unused_categories_json)
+            return render_template("create_budget.html", username=username, existing_budget=existing_budget,
+                                   expense_categories=expense_categories, unused_categories_json=unused_categories_json)
 
 
 @app.route("/budget_data")
