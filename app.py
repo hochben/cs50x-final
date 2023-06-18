@@ -49,6 +49,8 @@ def index():
         budget_name = ""
         budget_date = ""
         budget_time = ""
+        update_date = ""
+        update_time = ""
         income = 0
         total_expenses = 0
         savings = 0
@@ -244,6 +246,7 @@ def create_budget():
         income = request.form.get('income')
         savings = request.form.get('savings')
 
+        # If user has an existing budget, update the budget
         if existing_budget:
             # Update existing budget
             existing_budget.name = budget_name if budget_name else existing_budget.name
@@ -259,37 +262,27 @@ def create_budget():
 
             # Update or create savings entry
             if existing_budget.savings:
-                existing_budget.savings.amount = savings if savings is not None else existing_budget.savings.amount
-            elif savings is not None:
+                existing_budget.savings.amount = savings if savings else existing_budget.savings.amount
+            else:
                 savings_entry = Savings(user_id=current_user.user_id, budget_id=existing_budget.id, amount=savings)
                 db.session.add(savings_entry)
 
-            # Create expense entries
-            expense_categories = categories.expense_categories
-            expense_categories_form = request.form.getlist("category[]")  # Retrieve the list of expense categories from the form
-            expense_amounts = request.form.getlist("amount[]")
+            # Update or create expense entries
+            expense_categories = request.form.getlist('category[]')
+            expense_amounts = request.form.getlist('amount[]')
 
-            # Retrieve existing expenses for the current user and budget
-            existing_expenses = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id).all()
-            existing_expense_categories = [expense.category for expense in existing_expenses]
-
-            # Iterate through the expense categories from the form and amounts using zip() and pair them together
-            for category, amount in zip(expense_categories_form, expense_amounts):
-                if category and amount:
-                    if category in existing_expense_categories:
-                        # Update existing expense
-                        existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id, category=category).first()
-                        existing_expense.amount = amount
-                    else:
-                        # Create new expense
-                        expense_entry = Expense(user_id=current_user.user_id, budget_id=existing_budget.id, amount=amount, category=category)
-                        db.session.add(expense_entry)
+            for category, amount in zip(expense_categories, expense_amounts):
+                expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id, category=category).first()
+                if expense:
+                    expense.amount = amount
+                else:
+                    new_expense = Expense(user_id=current_user.user_id, budget_id=existing_budget.id, category=category, amount=amount)
+                    db.session.add(new_expense)
 
             # Update the update_date and update_time
             existing_budget.update_date = datetime.today().date()
             existing_budget.update_time = datetime.now().time()
 
-            # Commit all changes to the database
             db.session.commit()
 
             # Set the session variables
@@ -301,6 +294,9 @@ def create_budget():
             # Redirect user to home page
             flash('Budget updated successfully!', 'success')
 
+            return redirect("/")
+
+        # If user does not have an existing budget, create a new budget
         else:
             # Create new budget
             new_budget = Budget(user_id=current_user.user_id, name=budget_name, date=budget_date, time=budget_time)
@@ -421,6 +417,7 @@ def budget_data():
     }
 
     return jsonify(budget_data)
+
 
 # Run the application
 if __name__ == '__main__':

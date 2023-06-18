@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
- 
- 
 
   /*----- SIDEBAR TOGGLE -----*/
 
@@ -215,6 +213,237 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  /*----- ADD UPDATE/CANCEL BUTTON -----*/
+
+
+  /*----- UPDATE/CANCEL/SUBMIT BUTTONS -----*/
+
+  // Buttons for income
+
+  // Add event listener to update income button
+  let updateIncomeButton = document.querySelector('#update-income');
+  if (updateIncomeButton) {
+    updateIncomeButton.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let cancelButton = container.querySelector('#cancel-income');
+      let submitButton = container.querySelector('#submit-income');
+
+      // Enable the input field
+      inputField.disabled = false;
+
+      // Hide the update button
+      this.style.display = 'none';
+
+      // Show the cancel and submit buttons
+      cancelButton.style.display = 'inline-block';
+      submitButton.style.display = 'inline-block';
+
+      // Store the current value
+      inputField.dataset.originalValue = inputField.value;
+    });
+  }
+
+  // Add event listener to cancel income button
+  let cancelIncomeButton = document.querySelector('#cancel-income');
+  if (cancelIncomeButton) {
+    cancelIncomeButton.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let updateButton = container.querySelector('#update-income');
+      let submitButton = container.querySelector('#submit-income');
+
+      // Disable the input field
+      inputField.disabled = true;
+
+      // Hide the cancel and submit buttons
+      this.style.display = 'none';
+      submitButton.style.display = 'none';
+
+      // Show the update button
+      updateButton.style.display = 'inline-block';
+
+      // Restore the original value
+      let originalValue = inputField.dataset.originalValue;
+      inputField.value = originalValue;
+    });
+  }
+
+  // Add event listener to submit income button
+  let submitIncomeButton = document.querySelector('#submit-income');
+  if (submitIncomeButton) {
+    submitIncomeButton.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let updateButton = container.querySelector('#update-income');
+      let cancelButton = container.querySelector('#cancel-income');
+
+      // Disable the input field
+      inputField.disabled = true;
+
+      // Hide the cancel and submit buttons
+      cancelButton.style.display = 'none';
+      this.style.display = 'none';
+
+      // Show the update button
+      updateButton.style.display = 'inline-block';
+
+      // Save the new value
+      let newValue = inputField.value;
+      inputField.dataset.originalValue = newValue;
+    });
+  }
+
+  // Buttons for savings
+
+  // Add event listener to update savings button
+  let updateSavingsButton = document.querySelector('#update-savings');
+  if (updateSavingsButton) {
+    updateSavingsButton.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let cancelButton = container.querySelector('#cancel-savings');
+      let submitButton = container.querySelector('#submit-savings');
+
+      // Enable the input field
+      inputField.disabled = false;
+
+      // Hide the update button
+      this.style.display = 'none';
+
+      // Show the cancel and submit buttons
+      cancelButton.style.display = 'inline-block';
+      submitButton.style.display = 'inline-block';
+
+      // Store the current value
+      inputField.dataset.originalValue = inputField.value;
+    });
+  }
+
+  // Add event listener to cancel savings button
+  let cancelSavingsButton = document.querySelector('#cancel-savings');
+  if (cancelSavingsButton) {
+    cancelSavingsButton.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let updateButton = container.querySelector('#update-savings');
+      let submitButton = container.querySelector('#submit-savings');
+
+      // Disable the input field
+      inputField.disabled = true;
+
+      // Hide the cancel and submit buttons
+      this.style.display = 'none';
+      submitButton.style.display = 'none';
+
+      // Show the update button
+      updateButton.style.display = 'inline-block';
+
+      // Restore the original value
+      let originalValue = inputField.dataset.originalValue;
+      inputField.value = originalValue;
+    });
+  }
+
+  // Add event listener to submit savings button
+  let submitSavingsButton = document.querySelector('#submit-savings');
+  if (submitSavingsButton) {
+    submitSavingsButton.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let updateButton = container.querySelector('#update-savings');
+      let cancelButton = container.querySelector('#cancel-savings');
+
+      // Disable the input field
+      inputField.disabled = true;
+
+      // Hide the cancel and submit buttons
+      cancelButton.style.display = 'none';
+      this.style.display = 'none';
+
+      // Show the update button
+      updateButton.style.display = 'inline-block';
+
+      // Save the new value
+      let newValue = inputField.value;
+      inputField.dataset.originalValue = newValue;
+    });
+  }
+
+  // Buttons for expenses
+
+  // Add event listeners to update buttons for expenses
+  let updateExpenseButtons = document.querySelectorAll('.update-expense');
+  updateExpenseButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let cancelButton = container.querySelector('.cancel-expense');
+      let submitButton = container.querySelector('.submit-expense');
+
+      // Enable the input field
+      inputField.disabled = false;
+
+      // Hide the update button
+      this.style.display = 'none';
+
+      // Show the cancel and submit buttons
+      cancelButton.style.display = 'inline-block';
+      submitButton.style.display = 'inline-block';
+
+      // Store the current value
+      inputField.dataset.originalValue = inputField.value;
+    });
+  });
+
+  // Add event listeners to cancel buttons for expenses
+  let cancelExpenseButtons = document.querySelectorAll('.cancel-expense');
+  cancelExpenseButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let updateButton = container.querySelector('.update-expense');
+      let submitButton = container.querySelector('.submit-expense');
+
+      // Disable the input field
+      inputField.disabled = true;
+
+      // Hide the cancel and submit buttons
+      this.style.display = 'none';
+      submitButton.style.display = 'none';
+
+      // Show the update button
+      updateButton.style.display = 'inline-block';
+
+      // Restore the original value
+      let originalValue = inputField.dataset.originalValue;
+      inputField.value = originalValue;
+    });
+  });
+
+  // Add event listeners to submit buttons for expenses
+  let submitExpenseButtons = document.querySelectorAll('.submit-expense');
+  submitExpenseButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      let container = this.parentElement;
+      let inputField = container.querySelector('.amount-input');
+      let updateButton = container.querySelector('.update-expense');
+      let cancelButton = container.querySelector('.cancel-expense');
+
+      // Disable the input field
+      inputField.disabled = true;
+
+      // Hide the cancel and submit buttons
+      cancelButton.style.display = 'none';
+      this.style.display = 'none';
+
+      // Show the update button
+      updateButton.style.display = 'inline-block';
+
+      // Save the new value
+      let newValue = inputField.value;
+      inputField.dataset.originalValue = newValue;
+    });
+  });
+
 
 });

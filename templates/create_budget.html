@@ -13,61 +13,76 @@
       <input type="text" id="name" name="budget_name" placeholder="My Budget" {% if existing_budget %} value="{{ existing_budget.name }}" disabled {% endif %} required>
     {% endif %}
     
+    <!-- Existing Income -->
     <h2>Income</h2>
     <label for="income">Income:</label>
     {% if existing_budget %}
-      <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" value="{{ existing_budget.income.amount }}" disabled>
+      <div id="income-container">
+        <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" value="{{ existing_budget.income.amount }}" disabled>
+      </div>
       <button type="button" id="update-income">Update</button>
       <button type="button" id="cancel-income" style="display: none;">Cancel</button>
       <button type="button" id="submit-income" style="display: none;">Submit</button>
     {% else %}
-      <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05" required>
+      <!-- New Income -->
+      <input type="number" id="income" name="income" class="amount-input" placeholder="0.00" step="0.05">
     {% endif %}
 
+    <!-- Existing Savings -->
     <h2>Savings</h2>
     <label for="savings">Savings:</label>
     {% if existing_budget %}
-      <input type="number" id="savings" name="savings" class="amount-input" placeholder="0.00" step="0.05" value="{{ existing_budget.savings.amount }}" disabled>
+      <div id="savings-container">
+        <input type="number" id="savings" name="savings" class="amount-input" placeholder="0.00" step="0.05" value="{{ existing_budget.savings.amount }}" disabled>
+      </div>
       <button type="button" id="update-savings">Update</button>
       <button type="button" id="cancel-savings" style="display: none;">Cancel</button>
       <button type="button" id="submit-savings" style="display: none;">Submit</button>
     {% else %}
+      <!-- New Savings -->
       <input type="number" id="savings" name="savings" class="amount-input" placeholder="0.00" step="0.05">
     {% endif %}
 
+    <!-- Existing Expenses -->
     <h2>Expenses</h2>
     {% if existing_budget %}
       {% for expense in expenses %}
-        <div class="expense-entry">
-          <label>{{ expense[0] }}:</label>
-          <input type="number" name="amount_{{ loop.index }}" class="amount-input" value="{{ expense[1] }}" disabled>
-          <button type="button" class="update-expense">Update</button>
-          <button type="button" class="cancel-expense" style="display: none;">Cancel</button>
-          <button type="button" class="submit-expense" style="display: none;">Submit</button>
-        </div>
+          <div class="expense-entry">
+              <label>{{ expense[0] }}:</label>
+              <div id="expense-entry-container">
+                  <input type="number" name="amount_{{ loop.index }}" class="amount-input" value="{{ expense.amount }}" disabled>
+              </div>
+              <button type="button" class="update-expense">Update</button>
+              <button type="button" class="cancel-expense" style="display: none;">Cancel</button>
+              <button type="button" class="submit-expense" style="display: none;">Submit</button>
+          </div>
       {% endfor %}
     {% endif %}
 
+    <!-- New Expenses -->
     <div id="expense-container">
         <div id="new-expenses" class="new-expenses">
           <label for="category">Category:</label>
-          <select name="category[]" class="category"> <!-- Update the name to "category[]" -->
+          <select name="category[]" class="category">
             <option disabled selected value="">Select a category</option>
             {% for category in unused_categories %}
               <option value="{{ category }}">{{ category}}</option>
             {% endfor %}
           </select>
           <label for="amount">Amount:</label>
-          <input type="number" name="amount[]" class="amount-input" placeholder="0.00" step="0.05" required>
+          <input type="number" name="amount[]" class="amount-input" placeholder="0.00" step="0.05">
         </div>
     </div>
 
     <!-- Add hidden unusedCategories -->
     <span id="unused-categories" name="unused_categories" style="display: none;">{{ unused_categories_json }}</span>
 
+    <!-- Add entry button -->
     <span id="add-entry" class="add-entry material-icons-outlined">add_box</span>
+
+    <!-- Submit button -->
     <div class="submit">
-      <input type="submit" class="submit-button" value="Create Budget">
+      <input type="submit" class="submit-button" value="Submit Budget">
     </div>
   </form>
 {% endblock %}
