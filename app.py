@@ -82,6 +82,12 @@ def index():
         savings = Savings.query.filter_by(user_id=current_user.user_id, budget_id=current_budget.id).first()
         savings = savings.amount if savings else 0
 
+
+        # Debugging
+        print(f"income: {income}")
+        print(f"total_expenses: {total_expenses}")
+        print(f"savings: {savings}")
+
         # Create a dictionary with income, savings, expenses, total expenses
         budget_data = {
             'income': income,
@@ -323,9 +329,13 @@ def create_budget():
             db.session.add(new_budget)
             db.session.flush()  # Flush the session to get the new budget id
 
-            # Create income entry with the new budget_id
+            # Create new income entry
             income_entry = Income(user_id=current_user.user_id, budget_id=new_budget.id, amount=income)
             db.session.add(income_entry)
+
+            # Create savings entry
+            savings_entry = Savings(user_id=current_user.user_id, budget_id=new_budget.id, amount=savings)
+            db.session.add(savings_entry)
 
             # Retrieve the list of expense categories and amounts from the form
             expense_categories_form = request.form.getlist("category[]")
@@ -338,14 +348,8 @@ def create_budget():
             for category, amount in expense_entries:
                 if category and amount:
                     # Rest of the code for creating or updating expenses
-                    if category in [expense.category for expense in new_budget.expense]:
-                        # Update existing expense
-                        existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=new_budget.id, category=category).first()
-                        existing_expense.amount = amount
-                    else:
-                        # Create new expense
-                        expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
-                        db.session.add(expense_entry)
+                    expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
+                    db.session.add(expense_entry)
 
             # Update the update_date and update_time
             new_budget.update_date = datetime.today().date()
