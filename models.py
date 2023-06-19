@@ -65,6 +65,8 @@ class Expense(db.Model):
     amount = db.Column(db.Float(precision=2), nullable=False)
     category = db.Column(db.String(20), nullable=False)
 
+    budget = db.relationship("Budget", backref=db.backref("expenses", cascade="all, delete-orphan"))
+
 
 class Savings(db.Model):
     """Savings table"""

@@ -427,6 +427,52 @@ def budget_data():
     return jsonify(budget_data)
 
 
+@app.route("/update_budget_values", methods=["POST"])
+@login_required
+def update_budget_values():
+    """Update budget values"""
+
+    # Get the current user
+    current_user = Users.query.get(session["user_id"])
+
+    # Get the updated values from the AJAX request
+    updated_values = request.get_json()
+
+    # Debugging
+    print(updated_values)
+
+    # Get the existing budget
+    existing_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
+
+    if existing_budget:
+        # Update the values that have changed
+        if 'income' in updated_values and existing_budget.income:
+            existing_budget.income.amount = float(updated_values['income'])
+        if 'savings' in updated_values and existing_budget.savings:
+            existing_budget.savings.amount = float(updated_values['savings'])
+
+        for expense in existing_budget.expenses:
+            expense_id = f'amount_{expense.id}'
+            if expense_id in updated_values:
+                expense.amount = float(updated_values[expense_id])
+
+        # Update the update_date and update_time fields
+        existing_budget.update_date = datetime.today()
+        existing_budget.update_time = datetime.now().time()
+
+        # Debugging
+        print(existing_budget.income.amount)
+        print(existing_budget.savings.amount)
+        print(existing_budget.expenses)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        return jsonify({'message': 'Budget values updated successfully'})
+
+    return jsonify({'message': 'No existing budget found'}), 400
+
+
 # Run the application
 if __name__ == '__main__':
     app.run()

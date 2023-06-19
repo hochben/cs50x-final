@@ -49,120 +49,119 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /*----- CHARTS -----*/
 
-  if (document.getElementById('column-chart') && document.getElementById('pie-chart')) {
-    function createCharts(budgetData) {
-      // Extract the budgetData
-      const incomeData = budgetData.income;
-      const expenseData = budgetData.expenses;
-      const totalExpenses = budgetData.total_expenses;
-    
-      // Create columnChart
-      new Chart(document.getElementById('column-chart'), {
-        type: 'bar',
-        data: {
-          labels: ['Income', 'Total Expenses'],
-          datasets: [{
-            data: [incomeData.amount, totalExpenses.amount],
-            backgroundColor: [
-              'rgba(52, 121, 82, 0.8)',
-              'rgba(204, 60, 67, 0.8)'
-            ],
-            borderColor: [
-              'rgba(52, 121, 82, 0.8)',
-              'rgba(204, 60, 67, 0.8)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            },
-            title: {
-              display: true,
-              text: 'Income vs. Total Expenses'
-            }
+  function createCharts(budgetData) {
+    // Extract the budgetData
+    const incomeData = budgetData.income;
+    const expenseData = budgetData.expenses;
+    const totalExpenses = budgetData.total_expenses;
+  
+    // Create columnChart
+    new Chart(document.getElementById('column-chart'), {
+      type: 'bar',
+      data: {
+        labels: ['Income', 'Total Expenses'],
+        datasets: [{
+          data: [incomeData.amount, totalExpenses.amount],
+          backgroundColor: [
+            'rgba(52, 121, 82, 0.8)',
+            'rgba(204, 60, 67, 0.8)'
+          ],
+          borderColor: [
+            'rgba(52, 121, 82, 0.8)',
+            'rgba(204, 60, 67, 0.8)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
           },
-          layout: {
-            padding: {
-              left: 20,
-              right: 20,
-              top: 20,
-              bottom: 20
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+          title: {
+            display: true,
+            text: 'Income vs. Total Expenses'
           }
         },
-      });
+        layout: {
+          padding: {
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      },
+    });
 
-      // Create pieChart
-      new Chart(document.getElementById('pie-chart'), {
-        type: 'doughnut',
-        data: {
-          labels: expenseData.categories,
-          datasets: [{
-            label: 'Expense Categories',
-            data: expenseData.amounts,
-            backgroundColor: [
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-              '#FF8C00',
-              '#ADFF2F',
-              '#9932CC',
-              '#FF1493',
-              '#00BFFF',
-              '#8A2BE2',
-              '#00FF00',
-              '#FFD700',
-              '#DAA520',
-              '#4B0082',
-              '#800000',
-              '#228B22',
-              '#DC143C',
-              '#1E90FF',
-              '#FF00FF',
-              '#FF4500',
-              '#FF69B4',
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: true,
-              position: 'top',
-              labels: {
-                boxWidth: 20,
-                padding: 10,
-                usePointStyle: true,
-              }
-            },
-          },
-          layout: {
-            padding: {
-              left: 20,
-              right: 20,
-              top: 20,
-              bottom: 20
+    // Create pieChart
+    new Chart(document.getElementById('pie-chart'), {
+      type: 'doughnut',
+      data: {
+        labels: expenseData.categories,
+        datasets: [{
+          label: 'Expense Categories',
+          data: expenseData.amounts,
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#FF8C00',
+            '#ADFF2F',
+            '#9932CC',
+            '#FF1493',
+            '#00BFFF',
+            '#8A2BE2',
+            '#00FF00',
+            '#FFD700',
+            '#DAA520',
+            '#4B0082',
+            '#800000',
+            '#228B22',
+            '#DC143C',
+            '#1E90FF',
+            '#FF00FF',
+            '#FF4500',
+            '#FF69B4',
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 20,
+              padding: 10,
+              usePointStyle: true,
             }
-          }
+          },
         },
-      });
-    }
+        layout: {
+          padding: {
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20
+          }
+        }
+      },
+    });
+  }
 
   // Fetch budget_data using AJAX
-  fetch("/budget_data")
+  fetch('/budget_data')
     .then(response => response.json())
     .then(budgetData => {
       // Call the function to create the charts with the budgetData
@@ -171,6 +170,28 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => {
       console.error("Error fetching budget data:", error);
     });
+
+  function updateBudgetValues(budgetData) {
+    // Debugging
+    console.log('Updating budget values:', budgetData);
+  
+    fetch('/update_budget_values', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ budgetData }),
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Budget values updated successfully!');
+        } else {
+          console.error('Error updating budget values:', response.statusText);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating budget values:', error);
+      });
   }
 
 
@@ -247,6 +268,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const input = parentContainer.querySelector('.amount-input');
     const cancelBtn = parentContainer.querySelector('.cancelBtn');
     const submitBtn = parentContainer.querySelector('.submitBtn');
+    // Get the corresponding label element for the input
+    const label = input.parentElement.previousElementSibling;
 
     updateBtn.addEventListener('click', () => {
       originalValues[input.id] = input.value;
@@ -265,11 +288,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     submitBtn.addEventListener('click', () => {
-      updatedValues[input.id] = input.value;
+      const categoryId = label.textContent.replace(':', '');
+      updatedValues[categoryId] = input.value;
       input.disabled = true;
       updateBtn.style.display = 'inline-block';
       cancelBtn.style.display = 'none';
       submitBtn.style.display = 'none';
+
+      // Update the budget values in the database
+      updateBudgetValues(updatedValues);
     });
   });
 
@@ -289,20 +316,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Attach event handlers to each submit button
-  submitBtns.forEach((submitBtn) => {
-    const parentContainer = submitBtn.parentNode;
-    const input = parentContainer.querySelector('.amount-input');
-    const updateBtn = parentContainer.querySelector('.updateBtn');
-    const cancelBtn = parentContainer.querySelector('.cancelBtn');
-    
-    submitBtn.addEventListener('click', () => {
-      updatedValues[input.id] = input.value;
-      input.disabled = true;
-      updateBtn.style.display = 'inline-block';
-      cancelBtn.style.display = 'none';
-      submitBtn.style.display = 'none';
-    });
-  });
 
 });

@@ -66,6 +66,9 @@ instance/
 flask_session/
 .webassets-cache
 
+migrations/
+manage.py
+
 # Scrapy stuff:
 .scrapy
 
