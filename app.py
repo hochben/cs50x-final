@@ -362,15 +362,15 @@ def create_budget():
             unused_categories_json = json.dumps(unused_categories)
 
             return render_template("create_budget.html", username=username, existing_budget=existing_budget,
-                                   income=income, expenses=expenses, expense_categories=expense_categories,
-                                   unused_categories=unused_categories, unused_categories_json=unused_categories_json)
+                                income=income, expenses=expenses, expense_categories=expense_categories,
+                                unused_categories=unused_categories, unused_categories_json=unused_categories_json)
         else:
             # No existing budget, render the template with default values
             expense_categories = categories.expense_categories
             unused_categories_json = json.dumps(expense_categories)
 
             return render_template("create_budget.html", username=username, existing_budget=existing_budget,
-                                   expense_categories=expense_categories, unused_categories_json=unused_categories_json)
+                                expense_categories=expense_categories, unused_categories_json=unused_categories_json)
 
 
 @app.route("/budget_data")
@@ -446,27 +446,24 @@ def update_budget_values():
 
     if existing_budget:
         # Update the values that have changed
-        if 'income' in updated_values and existing_budget.income:
-            existing_budget.income.amount = float(updated_values['income'])
-        if 'savings' in updated_values and existing_budget.savings:
-            existing_budget.savings.amount = float(updated_values['savings'])
+        for category, amount in updated_values.items():
+            if category == 'Income':
+                # Update the income amount
+                existing_budget.income.amount = amount
+            if category == 'Savings':
+                # Update the savings amount
+                existing_budget.savings.amount = amount
+            if category in categories.expense_categories:
+                # Update the expense amount
+                existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id, category=category).first()
+                existing_expense.amount = amount
 
-        for expense in existing_budget.expenses:
-            expense_id = f'amount_{expense.id}'
-            if expense_id in updated_values:
-                expense.amount = float(updated_values[expense_id])
+            # Update the update_date and update_time fields
+            existing_budget.update_date = datetime.today()
+            existing_budget.update_time = datetime.now().time()
 
-        # Update the update_date and update_time fields
-        existing_budget.update_date = datetime.today()
-        existing_budget.update_time = datetime.now().time()
-
-        # Debugging
-        print(existing_budget.income.amount)
-        print(existing_budget.savings.amount)
-        print(existing_budget.expenses)
-
-        # Commit the changes to the database
-        db.session.commit()
+            # Commit the changes to the database
+            db.session.commit()
 
         return jsonify({'message': 'Budget values updated successfully'})
 
