@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-  /*----- SIDEBAR TOGGLE -----*/
+  /* ----- SIDEBAR TOGGLE ----- */
 
   let sidebarOpen = false;
   let sidebar = document.getElementById("sidebar");
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
   window.closeSidebar = closeSidebar;
 
 
-  /*----- ACCOUNT DROPDOWN MENU -----*/
+  /* ----- ACCOUNT DROPDOWN MENU ----- */
 
   let dropdownArrow = document.getElementById("dropdown-arrow");
   let dropdownMenu = document.getElementById("dropdown-menu");
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 
-  /*----- CHARTS -----*/
+  /* ----- CHARTS ----- */
 
   if (document.getElementById('column-chart') && document.getElementById('pie-chart')) {
     function createCharts(budgetData) {
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
 
-  /*----- ADD EXPENSE ENTRY -----*/
+  /* ----- ADD EXPENSE ENTRY ----- */
 
   // Dynamically add new expense entry when pressing "Add Entry" button
   let addEntryButton = document.getElementById("add-entry");
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
 
-  /*----- UPDATE BUDGET VALUES -----*/
+  /* ----- UPDATE BUDGET VALUES ----- */
 
   function updateBudgetValues(updatedValues) {
     // Debugging
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
-  /*----- UPDATE/CANCEL/SUBMIT BUTTONS -----*/
+  /* ----- UPDATE/CANCEL/SUBMIT BUTTONS ----- */
 
   // Get all the necessary elements
   const updateBtns = document.querySelectorAll('.updateBtn');

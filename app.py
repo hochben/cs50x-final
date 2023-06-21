@@ -49,8 +49,8 @@ def index():
         budget_name = ""
         budget_date = ""
         budget_time = ""
-        update_date = ""
-        update_time = ""
+        update_date = None
+        update_time = None
         income = 0
         total_expenses = 0
         savings = 0
@@ -59,8 +59,13 @@ def index():
         budget_name = current_budget.name
         budget_date = current_budget.date
         budget_time = current_budget.time
+
+        # Retrieve the update date and time from the current_budget
         update_date = current_budget.update_date
         update_time = current_budget.update_time
+
+        # Debugging
+        print(f"updated date: {update_date} at {update_time}")
 
         # Retrieve income and total expenses
         income = Income.query.filter_by(user_id=current_user.user_id, budget_id=current_budget.id).first()
@@ -294,9 +299,14 @@ def create_budget():
                         expense_entry = Expense(user_id=current_user.user_id, budget_id=existing_budget.id, amount=amount, category=category)
                         db.session.add(expense_entry)
 
-            # Update the update_date and update_time
+            # Update Budget date and time
             existing_budget.update_date = datetime.today().date()
             existing_budget.update_time = datetime.now().time()
+
+            # Debugging
+            print(f"existing_budget", existing_budget.update_date)
+            print(f"existing_budget", existing_budget.update_time)
+
 
             # Commit all changes to the database
             db.session.commit()
@@ -330,10 +340,6 @@ def create_budget():
                     expense_entry = Expense(user_id=current_user.user_id, budget_id=new_budget.id, amount=amount, category=category)
                     db.session.add(expense_entry)
 
-            # Update the update_date and update_time
-            new_budget.update_date = datetime.today().date()
-            new_budget.update_time = datetime.now().time()
-
             # Commit all changes to the database
             db.session.commit()
 
@@ -360,6 +366,10 @@ def create_budget():
             expense_categories = existing_budget.expense_categories
             unused_categories = [category for category in categories.expense_categories if category not in expense_categories]
             unused_categories_json = json.dumps(unused_categories)
+
+            # Update the update_date and update_time fields
+            existing_budget.update_date = datetime.today().date()
+            existing_budget.update_time = datetime.now().time()
 
             return render_template("create_budget.html", username=username, existing_budget=existing_budget,
                                 income=income, expenses=expenses, expense_categories=expense_categories,
@@ -435,16 +445,16 @@ def update_budget_values():
     # Get the current user
     current_user = Users.query.get(session["user_id"])
 
-    # Get the updated values from the AJAX request
-    updated_values = request.get_json()
-
-    # Debugging
-    print(updated_values)
-
     # Get the existing budget
     existing_budget = Budget.query.filter_by(user_id=current_user.user_id).order_by(Budget.id.desc()).first()
 
     if existing_budget:
+        # Get the updated values from the AJAX request
+        updated_values = request.get_json()
+
+        # Debugging
+        print(updated_values)
+
         # Update the values that have changed
         for category, amount in updated_values.items():
             if category == 'Income':
@@ -458,12 +468,16 @@ def update_budget_values():
                 existing_expense = Expense.query.filter_by(user_id=current_user.user_id, budget_id=existing_budget.id, category=category).first()
                 existing_expense.amount = amount
 
-            # Update the update_date and update_time fields
-            existing_budget.update_date = datetime.today()
-            existing_budget.update_time = datetime.now().time()
+        # Update the update_date and update_time fields
+        existing_budget.update_date = datetime.today().date()
+        existing_budget.update_time = datetime.now().time()
 
-            # Commit the changes to the database
-            db.session.commit()
+        # Debugging
+        print(existing_budget.update_date)
+        print(existing_budget.update_time)
+
+        # Commit the changes to the database
+        db.session.commit()
 
         return jsonify({'message': 'Budget values updated successfully'})
 

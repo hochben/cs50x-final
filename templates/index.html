@@ -6,9 +6,7 @@
 
 <!-- Main -->
 {% block main %}
-  <div class="main-title">
-    <h1 class="font-weight-bold">DASHBOARD</h1>
-  </div>
+    <h1>Dashboard</h1>
 
   <div class="welcome">
     <p class="text-primary">Welcome to your Budget Manager,
@@ -19,7 +17,9 @@
     <div class="budget-info">
         <p class="text-primary">BUDGET NAME: <span>{{ budget_name }}</span></p>
         <p class="text-primary">CREATED ON: <span>{{ budget_date }} at {{ budget_time }}</span></p>
-        <p class="text-primary">UPDATED ON: <span>{{ update_date }} at {{ update_time }}</span></p>
+        {% if update_date != budget_date or update_time != budget_time %}
+          <p class="text-primary">LAST UPDATED ON: <span>{{ update_date }} at {{ update_time }}</span></p>
+        {% endif %}
     </div>
   {% else %}
     <div class="budget-info">

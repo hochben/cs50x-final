@@ -35,7 +35,7 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 260px 1fr 1fr;
+  grid-template-columns: 250px 1fr 1fr;
   grid-template-rows: 0.2fr 2fr;
   grid-template-areas:
     "sidebar header header "
@@ -198,6 +198,7 @@ hr {
 .sidebar-responsive {
   display: inline !important;
   position: absolute;
+  z-index: 1;
 }
 
 
@@ -291,7 +292,7 @@ form button.cancelBtn:hover {
   background-color: #ca1c25;
 }
 
-form button.confirmBtn:hover {
+form button.submitBtn:hover {
   background-color: #239d56;
 }
 
@@ -336,7 +337,7 @@ form > #add-entry:hover {
 }
 
 
-/*----- CARDS ----- */
+/* ----- CARDS ----- */
 
 .main-cards {
   display: grid;
@@ -390,7 +391,7 @@ form > #add-entry:hover {
 
 
 
-/*----- CHARTS ----- */
+/* ----- CHARTS ----- */
 
 .charts {
   display: grid;
@@ -429,13 +430,55 @@ form > #add-entry:hover {
 }
 
 
+/* ----- FLASH MESSAGES ----- */
+
+.flash-messages {
+  padding: 0 20px;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  list-style-type: none;
+  padding: 0px !important;
+  border: none;
+}
+
+.flash-messages > li {
+  padding: 5px;
+  align-items: center;
+  font-size: 18px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+  animation: fadeOut 0s forwards;
+  animation-delay: 2s;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    display: none;
+  }
+}
+
+.flash-messages .success {
+  background-color: rgba(74, 207, 81, 0.5);
+  border: solid 1px #4acf50;
+}
+
+.flash-messages .error {
+  background-color: rgba(244, 67, 54, 0.5);
+  color: #fff;
+  border: solid 1px #f44336;
+}
+
+
 /* ----- MEDIA QUERIES ----- */
 
 /* Medium <= 992px */
 @media screen and (max-width: 992px) {
   .grid-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 0.2fr 3fr;
+    grid-template-rows: 0.2fr 2fr;
     grid-template-areas:
       "header"
       "main";
@@ -465,12 +508,5 @@ form > #add-entry:hover {
   .charts {
     grid-template-columns: 1fr;
     margin-top: 30px;
-  }
-}
-
-/* Extra Small <= 576px */
-@media screen and (max-width: 576px) {
-  .header-left {
-    display: none;
   }
 }

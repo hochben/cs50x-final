@@ -33,7 +33,19 @@
         <div class="menu-icon" onclick="openSidebar()">
           <span class="material-icons-outlined">menu</span>
         </div>
-        <div class="header-left"></div>
+        <div class="header-left">
+          <!-- Flash messages -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul class="flash-messages">
+                {% for category, message in messages %}
+                  <li class="flash-message {{ category }}">{{ message }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+          <!-- End Flash messages -->
+        </div>
         <div class="header-right">
           {% if session["user_id"] %}
             <span id="username" class="font-weight-bold">{{ username }}</span>
@@ -93,16 +105,6 @@
 
       <!-- Main -->
       <main class="main-container">
-        {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <ul class="flash-messages">
-                  {% for message in messages %}
-                    <li>{{ message }}</li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-            {% endwith %}
-        
         {% block main %}{% endblock %}
       </main>
       <!-- End Main-->
