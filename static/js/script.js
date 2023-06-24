@@ -225,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Update the hidden unusedCategories element
+  unusedCategories = Array.from(document.querySelectorAll('.category')).map(category => category.value);
   function updateUnusedCategories() {
     document.getElementById("unused-categories").textContent = JSON.stringify(unusedCategories);
   }
@@ -233,9 +234,6 @@ document.addEventListener('DOMContentLoaded', function() {
   /* ----- UPDATE BUDGET VALUES ----- */
 
   function updateBudgetValues(updatedValues) {
-    // Debugging
-    console.log('Updating budget values:', updatedValues);
-  
     fetch('/update_budget_values', {
       method: 'POST',
       headers: {
@@ -255,12 +253,12 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
+  
   /* ----- UPDATE/CANCEL/SUBMIT BUTTONS ----- */
 
   // Get all the necessary elements
   const updateBtns = document.querySelectorAll('.updateBtn');
   const cancelBtns = document.querySelectorAll('.cancelBtn');
-  const submitBtns = document.querySelectorAll('.submitBtn');
 
   // Variables to store the original and updated values
   let originalValues = {};

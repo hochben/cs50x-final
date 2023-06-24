@@ -47,6 +47,15 @@ hr {
 	border-top: 1px solid #9799ab;
 }
 
+form input {
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #9799ab;
+}
+
+
+
 
 /* ----- HEADER ----- */
 
@@ -130,6 +139,7 @@ hr {
 .menu-icon > span:hover {
   cursor: pointer;
 }
+
 
 /* ----- SIDEBAR ----- */
 
@@ -220,13 +230,21 @@ hr {
 }
 
 form > button#register,
-form > button#signin {
+form > button#signin,
+form > button#change-password {
   padding: 5px;
   border-radius: 5px;
   background-color: #0073ff;
   color: #fff;
   border: none;
   cursor: pointer;
+}
+
+form > button#register:hover,
+form > button#signin:hover,
+form > button#change-password:hover {
+  cursor: pointer;
+  background-color: #005eff;
 }
 
 
@@ -270,11 +288,10 @@ form h2 {
   font-weight: 700;
 }
 
-
 form button {
   display: inline;
-  margin-top: 0px !important;
   margin: 5px;
+  margin-left: 0;
   padding: 5px;
   border-radius: 5px;
   background-color: #888;
@@ -293,7 +310,7 @@ form button.cancelBtn:hover {
 }
 
 form button.submitBtn:hover {
-  background-color: #239d56;
+  background-color: #0073ff;
 }
 
 form > span#add-entry.add-entry {
@@ -333,6 +350,24 @@ form > #add-entry:hover {
 
 .submit > .submitFormBtn:hover {
   cursor: pointer;
+  background-color: #005eff;
+}
+
+form > #expense-container > .new-expenses {
+  margin: 10px 0;
+}
+
+form > #expense-container > .new-expenses > input {
+  margin: 0 !important;
+}
+
+form > #expense-container  .new-expenses > select.category {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #9799ab;
+}
+
+form > #expense-container .new-expenses > select > option:hover {
   background-color: #005eff;
 }
 

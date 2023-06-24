@@ -1,4 +1,4 @@
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, flash, get_flashed_messages, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
@@ -63,9 +63,6 @@ def index():
         # Retrieve the update date and time from the current_budget
         update_date = current_budget.update_date
         update_time = current_budget.update_time
-
-        # Debugging
-        print(f"updated date: {update_date} at {update_time}")
 
         # Retrieve income and total expenses
         income = Income.query.filter_by(user_id=current_user.user_id, budget_id=current_budget.id).first()
@@ -303,11 +300,6 @@ def create_budget():
             existing_budget.update_date = datetime.today().date()
             existing_budget.update_time = datetime.now().time()
 
-            # Debugging
-            print(f"existing_budget", existing_budget.update_date)
-            print(f"existing_budget", existing_budget.update_time)
-
-
             # Commit all changes to the database
             db.session.commit()
 
@@ -315,6 +307,7 @@ def create_budget():
             flash('Budget updated successfully!', 'success')
             return redirect("/")
 
+        # User does not have an existing budget
         else:
             # Create new budget
             new_budget = Budget(user_id=current_user.user_id, name=budget_name, date=budget_date, time=budget_time)
@@ -452,9 +445,6 @@ def update_budget_values():
         # Get the updated values from the AJAX request
         updated_values = request.get_json()
 
-        # Debugging
-        print(updated_values)
-
         # Update the values that have changed
         for category, amount in updated_values.items():
             if category == 'Income':
@@ -471,10 +461,6 @@ def update_budget_values():
         # Update the update_date and update_time fields
         existing_budget.update_date = datetime.today().date()
         existing_budget.update_time = datetime.now().time()
-
-        # Debugging
-        print(existing_budget.update_date)
-        print(existing_budget.update_time)
 
         # Commit the changes to the database
         db.session.commit()
