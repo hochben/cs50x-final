@@ -76,9 +76,11 @@ Budget Manager
 +-- helpers.py - Herein defined are helper functions, such as errorhandler, login_required and the class categories,
                  which lists all predefined expense categories.
 |
-+-- manage.py - Used for migrating the database during development
-|
 +-- models.py - Here are all tables defined for the database.db file
+|
++-- README.md - Readme file
+|
++-- requirements.txt - Includes all dependencies used for this project
 ```
 
 ## Future Enhancements
