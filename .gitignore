@@ -69,8 +69,6 @@ flask_session/
 migrations/
 manage.py
 
-models.py
-
 # Scrapy stuff:
 .scrapy
 
